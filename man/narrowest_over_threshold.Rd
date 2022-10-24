@@ -21,7 +21,7 @@ narrowest_over_threshold(y, lambda, rand_ints = NULL, N = 1000, max_cps = NULL)
 ...
 }
 \description{
-Narrowest over threshold for change in mean.
+Apply the narrowest over threshold changepoint algorithm to a vector of data. The model is the piecewise constant mean model.
 }
 \examples{
 y <- rnorm(200) + c(rep(1,90), rep(-1,20), rep(1,90))

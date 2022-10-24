@@ -1,3 +1,31 @@
+#' Calculate interval for narrowest over threshold
+#'
+#' @description Find values of phi which satisfy the required inequalities so that the narrowest over threshold algorithm 
+#' returns \code{(b, d)};
+#' Option to only consider part of \code{(b, d)}, e.g. if we just want b1 & d1 to be specified, & don't care about
+#' later values
+#'
+#' @details (possibly outdated)
+#' At present this ignores the threshold and just matches the number of CPs found (currently updating)
+#' If threshold is also supplied, this will also be used.
+#' Otherwise, if threshold is supplied (but not n.cp), the interval returned will be that for which the complete
+#' b and d match those given, when BS is given this threshold. If threshold is not supplied, it will be assumed
+#' that BS is run with a fixed number of iterations. If both n.cp and threshold are supplied, it will be assumed that
+#' n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
+#'
+#' @param y vector of data (ignored if cs & nuTy are supplied)
+#' @param nu ...
+#' @param results Output of \code{wild_binary_segmentation}.
+#' @param nu2 value of ||nu||_2^2
+#' @param nuTy value of nu^T y
+#' @param cps2 ?
+#'
+#' @return A 2-dimensional vector
+#' @export
+#'
+#' @examples
+#' x <- 0
+#'
 calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NULL){
   
   ######## Find values of phi which satisfy the required inequalities so that the NOT (change in mean) algorithm returns given results

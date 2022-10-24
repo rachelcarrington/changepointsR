@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_cps.R
 \name{find_cps}
 \alias{find_cps}
-\title{Title}
+\title{Find changepoints.}
 \usage{
 find_cps(
   y,
@@ -16,21 +16,24 @@ find_cps(
 )
 }
 \arguments{
-\item{y}{vector of data}
+\item{y}{Numeric vector of data.}
 
-\item{method}{"bs" = binary segmenation; "wbs" = wild binary segmentation; "not" = narrowest over threshold}
+\item{method}{Character string; \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
+\code{"not"} for narrowest over threshold.}
 
-\item{threshold}{changepoint detection threshold for CUSUM statistic}
+\item{threshold}{Numeric; changepoint detection threshold for CUSUM statistic.}
 
-\item{maxiter}{max. number of changepoints to detect}
+\item{maxiter}{Integer; maximum number of changepoints to detect.}
 
-\item{num_rand_ints}{number of random intervals (ignored if rand_ints specified, or if method = "bs")}
+\item{num_rand_ints}{Integer; number of random intervals. Ignored if \code{rand_ints} is specified, or if
+\code{method = "bs"}.}
 
-\item{rand_ints}{random intervals for wild binary segmentation or narrowest over threshold (ignored if method = "bs")}
+\item{rand_ints}{Matrix containing random intervals for wild binary segmentation or narrowest over threshold.
+Ignored if \code{method = "bs"}.}
 
-\item{seeded}{if TRUE and method = "wbs", then seeded binary segmentation is implemented}
+\item{seeded}{Logical; if \code{TRUE} and \code{method = "wbs"}, then seeded binary segmentation is implemented.}
 
-\item{decay}{decay parameter for seeded binary segmentation; only used if method = "wbs" and seeded = TRUE}
+\item{decay}{Decay parameter for seeded binary segmentation; only used if \code{method = "wbs"} and \code{seeded = TRUE}.}
 }
 \value{
 ...

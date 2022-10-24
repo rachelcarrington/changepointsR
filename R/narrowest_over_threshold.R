@@ -1,5 +1,8 @@
 #' Narrowest over threshold for change in mean.
 #'
+#' @description
+#' Apply the narrowest over threshold changepoint algorithm to a vector of data. The model is the piecewise constant mean model.
+#'
 #' @param y A numeric vector of data.
 #' @param lambda Threshold; a scalar.
 #' @param rand_ints Matrix containing random intervals; optional.

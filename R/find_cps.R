@@ -1,18 +1,19 @@
-## dependent functions: binary_segmentation, wild_binary_segmentation, narrowest_over_threshold, cusum, generate_random_intervals
-
-#' Title
+#' Find changepoints.
 #'
 #' @description
 #' Implements binary segmentation, wild binary segmentation, narrowest over threshold for change in mean model.
 #'
-#' @param y vector of data
-#' @param method "bs" = binary segmenation; "wbs" = wild binary segmentation; "not" = narrowest over threshold
-#' @param threshold changepoint detection threshold for CUSUM statistic
-#' @param maxiter max. number of changepoints to detect
-#' @param num_rand_ints number of random intervals (ignored if rand_ints specified, or if method = "bs")
-#' @param rand_ints random intervals for wild binary segmentation or narrowest over threshold (ignored if method = "bs")
-#' @param seeded if TRUE and method = "wbs", then seeded binary segmentation is implemented
-#' @param decay decay parameter for seeded binary segmentation; only used if method = "wbs" and seeded = TRUE
+#' @param y Numeric vector of data.
+#' @param method Character string; \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
+#' \code{"not"} for narrowest over threshold.
+#' @param threshold Numeric; changepoint detection threshold for CUSUM statistic.
+#' @param maxiter Integer; maximum number of changepoints to detect.
+#' @param num_rand_ints Integer; number of random intervals. Ignored if \code{rand_ints} is specified, or if
+#' \code{method = "bs"}.
+#' @param rand_ints Matrix containing random intervals for wild binary segmentation or narrowest over threshold.
+#' Ignored if \code{method = "bs"}.
+#' @param seeded Logical; if \code{TRUE} and \code{method = "wbs"}, then seeded binary segmentation is implemented.
+#' @param decay Decay parameter for seeded binary segmentation; only used if \code{method = "wbs"} and \code{seeded = TRUE}.
 #'
 #' @return ...
 #' @export
