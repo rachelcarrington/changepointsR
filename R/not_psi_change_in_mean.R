@@ -5,11 +5,11 @@
 #'
 #' @param y Numeric vector of data.
 #' @param lambda Threshold for determining changepoint candidates.
-#' @param results Output of narrowest over threshold algorithm (optional).
-#' @param max_cps Maximum number of changepoints for the algorithm to detect; defaults to 1; ignored if results
+#' @param results Output from applying \code{narrowest_over_threshold} to \code{y} (optional).
+#' @param max_cps Maximum number of changepoints for the algorithm to detect; defaults to 1. Ignored if \code{results}
 #' specified.
-#' @param N Number of random intervals; defaults to 1000; ignored if results or rand_ints specified.
-#' @param rand_ints Random intervals for narrowest over threshold algorithm; ignored if results specified.
+#' @param N Number of random intervals; defaults to 1000. Ignored if \code{results} or \code{rand_ints} specified.
+#' @param rand_ints Random intervals for narrowest over threshold algorithm. Ignored if \code{results} specified.
 #'
 #' @return List of results ...
 #' @export
