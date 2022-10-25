@@ -1,6 +1,6 @@
 #' Calculate interval for binary segmentation
 #'
-#' @description Find values of phi which satisfy the required inequalities so that the BS algorithm returns (b, d);
+#' @description Find values of phi which satisfy the required inequalities so that the binary segmentation algorithm returns (b, d);
 #' Option to only consider part of (b, d), e.g. if we just want b1 & d1 to be specified, & don't care about
 #' later values
 #'
@@ -12,30 +12,27 @@
 #' that BS is run with a fixed number of iterations. If both n.cp and threshold are supplied, it will be assumed that
 #' n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
 #'
-#' @param y vector of data (ignored if cs & nuTy are supplied)
+#' @param y Numeric vector of data.
 #' @param nu ...
-#' @param b vector of changepoints detected by binary segmentation algorithm
-#' @param d directions of changepoints detected by binary segmentation algorithm
-#' @param cs ...
-#' @param nu2 value of ||nu||_2^2
-#' @param nuTy value of nu^T y
-#' @param threshold minimum changepoint threshold used in binary segmentation algorithm
-#' @param n.cp max. number of changepoints to detect of binary segmentation algorithm
+#' @param b Vector of changepoints detected by binary segmentation algorithm.
+#' @param d Directions of changepoints detected by binary segmentation algorithm. Vector whose entries are all equal to \code{1} or \code{-1}.
+#' @param nu2 Value of the squared 2-norm of \code{nu}.
+#' @param nuTy Value of \code{nu^T %*% y}.
+#' @param threshold Minimum changepoint threshold used in binary segmentation algorithm.
+#' @param n.cp Maximum number of changepoints to detect of binary segmentation algorithm.
 #'
 #' @return A 2-dimensional vector
 #' @export
 #'
 #' @examples
-#' x <- 0
+#' # to do
 #'
-calculate_interval_bs <- function(y, nu, b, d, cs=NULL, nu2=NULL, nuTy=NULL, threshold=NULL, n.cp=NULL ){
+calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NULL, n.cp=NULL ){
 
-  if ( is.null(n.cp) ){
-    if ( is.null(threshold) ){
-      n.cp <- length(b) ## assume number of iterations was specified since threshold is not given
-    } else {
-      n.cp <- length(y) ## just use threshold
-    }
+  if ( is.null(n.cp) & is.null(threshold) ){
+    stop("At least one of n.cp and threshold must be supplied.")
+  } else if ( is.null(n.cp) ){
+    n.cp <- length(y)
   }
 
   if ( is.null(nu2) ){
@@ -48,16 +45,14 @@ calculate_interval_bs <- function(y, nu, b, d, cs=NULL, nu2=NULL, nuTy=NULL, thr
 
   n <- length(y)
 
-  if ( is.null(cs) ){
-    cs <- cusum_phi_vec( y, nu, nu2, nuTy )
-  }
+  cs <- cusum_phi_vec(y, nu, nu2, nuTy)
 
   ### If no CPs (threshold must be specified):
   if ( length(b)==0 ){
 
     ### We need all |Ct|'s to be < threshold
     ### We can ignore those for which cs[,2] = 0, since these are constant in phi
-    x <- abs(cs[,2]) > 10^(-10)
+    x <- ( abs(cs[,2]) > 10^(-10) )
     inequalities <- c( (threshold - cs[x,1]) / cs[x,2], (-threshold - cs[x,1]) / cs[x,2] )
     signs <- c( ifelse( cs[x,2] > 0, -1, 1 ), ifelse( cs[x,2] > 0, 1, -1 ) )
     max_lower_bound <- max( inequalities[ signs==1] )
