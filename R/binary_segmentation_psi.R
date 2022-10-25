@@ -4,21 +4,34 @@
 #' uses method of Jewell et al.
 #'
 #' @details
-#' ...
+#' Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
+#' \itemize{
+#' \item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. If \code{nus = NULL} but \code{h} is supplied,
+#' then the value of \eqn{\nu} for each changepoint will be calculated using this assumption.
+#' \item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. If \eqn{\tau_j} is the first
+#' changepoint, then \eqn{\tau_{j-1}} is taken to be 0; if it is the last changepoint, \eqn{\tau_{j+1}} is taken to be 
+#' \code{length(y)}. If \code{nus = NULL} and \code{h = NULL}, then the value of \eqn{\nu} for each changepoint will be calculated 
+#' using this assumption.
+#' }
+#' Alternatively \code{nus} can be specified manually.
 #'
-#' @param y A numeric vector of data.
+#' @param y Numeric vector of data.
 #' @param results Output of binary_segmentation function; can be NULL.
-#' @param nus List of nu's for each detected changepoint.
-#' @param threshold Minimum threshold for CUSUM statistic for changepoint detection; ignored if results specified.
-#' @param maxiter Max. number of changepoints to find; ignored if results specified; otherwise defaults to n-1.
-#' @param eps0 Hyperparameter for calculating S.
-#' @param sigma2 Variance of y. If unknown, it can be estimated within the function.
-#' @param h Window size. If NULL, the window is taken to be ...
-#' @param first_cp_only Logical. Should be TRUE if the condition is that the changepoint of interest is in the model;
-#'  FALSE if the condition is that all changepoints are the same.
-#' @param num_pvals Integer. Maximum number of p-values to calculate; defaults to n-1 if NULL.
+#' @param nus List of nu's for each detected changepoint. See details.
+#' @param threshold Numeric; minimum threshold for CUSUM statistic for changepoint detection. Ignored if results specified.
+#' @param maxiter Number of changepoints to find. Ignored if results specified; otherwise defaults to \code{length(y) - 1}.
+#' @param eps0 Hyperparameter for calculating S. (Details.)
+#' @param sigma2 Variance of \code{y}. If unknown, it can be estimated within the function.
+#' @param h Window size. See details.
+#' @param first_cp_only Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model; 
+#' if \code{FALSE}, condition on all changepoints. Defaults to \code{TRUE} if \code{h} is supplied, and \code{FALSE} otherwise.
+#' @param num_pvals Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}.
 #'
-#' @return A list containing: the vector of changepoints and the vector of p-values.
+#' @return A list containing:
+#' \itemize{
+#' \item \code{b} Numeric vector of changepoints
+#' \item \code{p_value} Numeric vector of p-values
+#' }
 #' @export
 #'
 #' @examples
@@ -72,6 +85,10 @@ binary_segmentation_psi <- function( y, results=NULL, nus=NULL, threshold=NULL, 
     sigma2 <- sigma2 / (n - 1)
   }
 
+  if ( !is.null(h) & !(first_cp_only) ){
+    first_cp_only <- TRUE
+  }
+
   p_value <- rep(NA, num_pvals)
 
   for ( jj in 1:num_pvals ){
@@ -110,7 +127,6 @@ binary_segmentation_psi <- function( y, results=NULL, nus=NULL, threshold=NULL, 
       S <- calculate_S_all_methods( y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
                                     nuTy=nuTy )
     }
-
 
 
     ####### Calculate p-values

@@ -18,18 +18,23 @@
 #'
 generate_random_intervals <- function( n, N, min_width=2 ){
 
+  stopifnot( is.numeric(n) || is.integer(n) )
+  stopifnot( is.numeric(N) || is.integer(N) )
+  stopifnot( is.numeric(min_width) || is.integer(min_width) )
+  stopifnot( min_width >= 0, min_width <= n )
+
   ### Maximum number of random intervals for given n:
-  N_max <- (n - min_width)*(n - min_width + 1)/2
+  N_max <- (n - min_width + 1)*(n - min_width + 2)/2
 
   if ( N < N_max ){
 
-    rand_ints <- matrix( sample( 1:n, 2*N, replace=TRUE ), ncol=2 )
+    rand_ints <- matrix( sample(1:n, 2*N, replace=TRUE), ncol=2 )
 
     ### Delete and replace duplicates
     rand_ints <- t( apply(rand_ints, 1, sort) )
     rand_ints <- rand_ints[ !(duplicated(rand_ints)), ]
     while( nrow(rand_ints) < N ){
-      rand_ints_2 <- matrix( sample(1:n, 2*(N-nrow(rand_ints)), replace=TRUE), ncol=2 )
+      rand_ints_2 <- matrix( sample(1:n, 2*(N - nrow(rand_ints)), replace=TRUE), ncol=2 )
       rand_ints_2 <- t( apply(rand_ints_2, 1, sort) )
       rand_ints <- rbind(rand_ints, rand_ints_2)
       rand_ints <- rand_ints[ !(duplicated(rand_ints)), ]

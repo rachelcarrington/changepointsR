@@ -7,23 +7,24 @@
 cusum_phi_vec(y, nu, nu2 = NULL, nuTy = NULL, s = 1, e = length(y))
 }
 \arguments{
-\item{y}{Vector of data}
+\item{y}{Numeric vector of data.}
 
-\item{nu}{nu}
+\item{nu}{Numeric vector.}
 
-\item{nu2}{Value of ||nu||_2^2}
+\item{nu2}{Numeric; value of the squared 2-norm of \code{nu}.}
 
-\item{nuTy}{Value of nu^T y}
+\item{nuTy}{Value of nu^T y.}
 
-\item{s}{Starting point for calculating CUSUM statistics, defaults to 1}
+\item{s}{Starting point for calculating CUSUM statistics, defaults to 1.}
 
-\item{e}{Ending point for calculating CUSUM statistics, degaults to n}
+\item{e}{Ending point for calculating CUSUM statistics, degaults to \code{length(y)}.}
 }
 \value{
-Returns n x 2 matrix s.t. cusum_phi_vec(y)^T (1,phi) = cusm(y'(phi))
+Returns \code{length(y)} x 2 matrix such that
+\code{cusum_phi_vec(y, nu)^T \%*\% c(1, phi) = cusum(y_phi(y, nu, phi))}.
 }
 \description{
-Used inside binary_segmentation_psi (etc.)
+Used inside \code{binary_segmentation_psi} (etc.)
 }
 \examples{
 set.seed(100)

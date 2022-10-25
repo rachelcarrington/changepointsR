@@ -1,7 +1,7 @@
 #' Find changepoints.
 #'
 #' @description
-#' Implements binary segmentation, wild binary segmentation, narrowest over threshold for change in mean model.
+#' Implement binary segmentation, wild binary segmentation, narrowest over threshold for change in mean model.
 #'
 #' @param y Numeric vector of data.
 #' @param method Character string; \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
@@ -19,11 +19,22 @@
 #' @export
 #'
 #' @examples
-#' # ...
+#' set.seed(100)
+#' y <- rnorm(100) + c(rep(1,45), rep(-1,10), rep(1,45))
+#' results_bs <- find_cps(y, "bs", threshold=4)
+#' print(results_bs$results)
+#'
+#' results_wbs <- find_cps(y, "wbs", threshold=4, num_rand_ints=100)
+#' print(results_wbs$results)
+#'
+#' results_not <- find_cps(y, "not", threshold=4, num_rand_ints=100)
+#' print(results_not$results)
 #'
 find_cps <- function(y, method, threshold=NULL, maxiter=NULL, num_rand_ints=NULL, rand_ints=NULL, seeded=FALSE, decay=NULL){
 
-  if ( method=="bs" ){
+  stopifnot( method == "bs" || method == "wbs" || method == "not" )
+
+  if ( method == "bs" ){
 
     results <- binary_segmentation(y, threshold, maxiter)
 
@@ -37,6 +48,7 @@ find_cps <- function(y, method, threshold=NULL, maxiter=NULL, num_rand_ints=NULL
 
   } else if ( method=="not" ){
 
+    stopifnot( !is.null(threshold) )
     results <- narrowest_over_threshold(y, threshold, N=num_rand_ints, rand_ints=rand_ints, max_cps=maxiter)
 
   }

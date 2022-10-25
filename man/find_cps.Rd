@@ -39,9 +39,18 @@ Ignored if \code{method = "bs"}.}
 ...
 }
 \description{
-Implements binary segmentation, wild binary segmentation, narrowest over threshold for change in mean model.
+Implement binary segmentation, wild binary segmentation, narrowest over threshold for change in mean model.
 }
 \examples{
-# ...
+set.seed(100)
+y <- rnorm(100) + c(rep(1,45), rep(-1,10), rep(1,45))
+results_bs <- find_cps(y, "bs", threshold=4)
+print(results_bs$results)
+
+results_wbs <- find_cps(y, "wbs", threshold=4, num_rand_ints=100)
+print(results_wbs$results)
+
+results_not <- find_cps(y, "not", threshold=4, num_rand_ints=100)
+print(results_not$results)
 
 }

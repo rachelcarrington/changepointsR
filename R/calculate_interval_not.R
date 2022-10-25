@@ -18,7 +18,6 @@
 #' @param results Output of \code{wild_binary_segmentation}.
 #' @param nu2 value of ||nu||_2^2
 #' @param nuTy value of nu^T y
-#' @param cps2 ?
 #'
 #' @return A 2-dimensional vector
 #' @export
@@ -26,7 +25,7 @@
 #' @examples
 #' x <- 0
 #'
-calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NULL){
+calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL){
   
   ######## Find values of phi which satisfy the required inequalities so that the NOT (change in mean) algorithm returns given results
 
@@ -37,12 +36,6 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
   s <- results$results$s
   e <- results$results$e
 
-  if ( is.null( cps2 ) ){
-    cps <- c( 0, sort( b, decreasing=FALSE ), n )
-    j <- (1:length(cps))[ cps==b[1] ]
-    cps2 <- cps[ (j-1):(j+1) ]
-  }
-
   if ( is.null(nu2) ){
     nu2 <- sum(nu^2)
   }
@@ -51,7 +44,11 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
   }
   
   rand_ints <- results$rand_ints
-  lambda <- results$lambda
+  lambda <- results$threshold
+
+  cps <- c( 0, sort(b, decreasing=FALSE), n )
+  j <- (1:length(cps))[ cps==b[1] ]
+  cps2 <- cps[ (j-1):(j+1) ]
 
   inequalities_list <- inequalities_signs <- numeric(0)
 
@@ -59,9 +56,9 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
 
   ### If there are no CPs detected, we require |C_(s,e) (t)| < lambda for all (s,e) and all t
 
-    for ( j in 1:nrow( rand_ints ) ){  
-      cs <- cusum_phi_vec( y, nu, nu2=nu2, nuTy=nuTy, s=rand_ints[j,1], e=rand_ints[j,2] )
-      cs <- cs[ abs( cs[,2] ) > 10^(-10),,drop=FALSE ]
+    for ( j in 1:nrow(rand_ints) ){  
+      cs <- cusum_phi_vec(y, nu, nu2=nu2, nuTy=nuTy, s=rand_ints[j,1], e=rand_ints[j,2])
+      cs <- cs[ abs(cs[,2]) > 10^(-10),,drop=FALSE ]
       inequalities_list <- c( inequalities_list, (lambda - cs[,1])/cs[,2], ((-1)*lambda - cs[,1])/cs[,2] )
       inequalities_signs <- c( inequalities_signs, ifelse( cs[,2] > 0, -1, 1 ), ifelse( cs[,2] > 0, 1, -1 ) )
     }
@@ -74,8 +71,8 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
     #### For narrower intervals, need |C(t)| < lambda for all t in interval, discarding intervals containing previous CPs
 
     cp_widths <- e - s + 1
-    for ( k in 1:length(b) ){
-      widths <- rand_ints[,2] - rand_ints[,1] + 1
+    widths <- rand_ints[,2] - rand_ints[,1] + 1
+    for ( k in 1:length(b) ){  
       if ( k == 1 ){
         smaller_intervals <- rand_ints[ widths < cp_widths[k],,drop=FALSE ]
       } else { ## if k > 1
@@ -87,13 +84,13 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
         }
       }
 
-      if ( nrow( smaller_intervals ) >= 1 ){
+      if ( nrow(smaller_intervals) >= 1 ){
         for ( j in 1:nrow(smaller_intervals) ){
           s1 <- smaller_intervals[j,1]
           e1 <- smaller_intervals[j,2]
 
-          cs2 <- cusum_phi_vec(y, nu, nu2, nuTy, s=s1, e=e1 )
-          cs2 <- cs2[ abs( cs2[,2] ) > 10^(-10),,drop=FALSE ] ## if cs2[t,2] = 0 then C(t) is constant in phi
+          cs2 <- cusum_phi_vec(y, nu, nu2, nuTy, s=s1, e=e1)
+          cs2 <- cs2[ abs(cs2[,2]) > 10^(-10),,drop=FALSE ] ## if cs2[t,2] = 0 then C(t) is constant in phi
           inequalities_list <- c( inequalities_list, (lambda - cs2[,1])/cs2[,2], ((-1)*lambda - cs2[,1])/cs2[,2] )
           inequalities_signs <- c( inequalities_signs, (-1)*(2*(cs2[,2] > 0) - 1), 1*(2*(cs2[,2] > 0) - 1) )
         }
@@ -110,9 +107,9 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
       same_intervals <- rand_ints[ widths==width,,drop=FALSE ]
   
       ### Delete intervals containing earlier CPs
-      if ( k >= 2 & nrow( same_intervals ) >= 1 ){
-        x <- rep( 1, nrow( same_intervals ) )
-        for ( j in 1:nrow( same_intervals ) ){
+      if ( k >= 2 & nrow(same_intervals) >= 1 ){
+        x <- rep(1, nrow(same_intervals))
+        for ( j in 1:nrow(same_intervals) ){
           for ( m in 1:(k-1) ){
             if ( b[m] >= same_intervals[j,1] & b[m] < same_intervals[j,2] ){
               x[j] <- 0
@@ -123,37 +120,37 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
       }
 
       if ( nrow(same_intervals) >= 1 ){
-        cs <- cusum_phi_vec( y, nu, nu2=nu2, nuTy=nuTy, s=s[k], e=e[k] )
-        for ( j in 1:nrow( same_intervals ) ){
+        cs <- cusum_phi_vec(y, nu, nu2=nu2, nuTy=nuTy, s=s[k], e=e[k])
+        for ( j in 1:nrow(same_intervals) ){
           interval <- same_intervals[j,]
    
           ### If this is the CP-containing interval, we need |C(b)| > +/- C(t) for t \neq b
           ### and | C(t) | >= lambda
-          if ( sum( abs( interval - c(s[k], e[k]) ) )==0 ){
+          if ( sum( abs(interval - c(s[k], e[k])) )==0 ){
             ### C(b[k]) > (-d1)*lambda
-            if ( abs(cs[b[k]-s[k]+1,2]) > 10^(-10) ){ ## if denominator is 0, inequality is always satisfied so we can ignore it
+            if ( abs(cs[b[k] - s[k] + 1, 2]) > 10^(-10) ){ ## if denominator is 0, inequality is always satisfied so we can ignore it
               if ( d[k] == 1 ){
-                inequalities_list <- c( inequalities_list, (-1)*(lambda + cs[b[k]-s[k]+1,1])/cs[b[k]-s[k]+1,2])
+                inequalities_list <- c( inequalities_list, (-1)*(lambda + cs[b[k] - s[k] + 1, 1])/cs[b[k] - s[k] + 1, 2] )
               } else {
-                inequalities_list <- c( inequalities_list, (lambda - cs[b[k]-s[k]+1,1])/cs[b[k]-s[k]+1,2])
+                inequalities_list <- c( inequalities_list, (lambda - cs[b[k] - s[k] + 1, 1])/cs[b[k] - s[k] + 1, 2] )
               }
-              inequalities_signs <- c( inequalities_signs, ifelse( cs[b[k]-s[k]+1,2] > 0, -d[k], d[k] ) )
+              inequalities_signs <- c( inequalities_signs, ifelse( cs[b[k] - s[k] + 1, 2] > 0, -d[k], d[k] ) )
             }
 
             ### |C(b[k])| > +/- C(t) for t \neq b[k]
-            inequalities <- cbind((cs[,1] - cs[b[k]-s[k]+1,1])/(cs[b[k]-s[k]+1,2] - cs[,2]), (-1)*(cs[,1] + cs[b[k]-s[k]+1,1])/(cs[b[k]-s[k]+1,2] + cs[,2]))
-            signs <- cbind( ifelse( cs[b[k]-s[k]+1,2]-cs[,2]>0, -d[k], d[k] ), ifelse( cs[b[k]-s[k]+1,2]+cs[,2]>0, -d[k], d[k] ) )
+            inequalities <- cbind((cs[,1] - cs[b[k]-s[k]+1, 1])/(cs[b[k]-s[k]+1, 2] - cs[,2]), (-1)*(cs[,1] + cs[b[k]-s[k]+1, 1])/(cs[b[k]-s[k]+1, 2] + cs[,2]))
+            signs <- cbind( ifelse( cs[b[k]-s[k]+1, 2] - cs[,2] > 0, -d[k], d[k] ), ifelse( cs[b[k]-s[k]+1, 2] + cs[,2] > 0, -d[k], d[k] ) )
 
             ### Remove b[k] since we don't need this (will probably return NaN or Inf otherwise)
             inequalities[ b[k]-s[k]+1, ] <- NA
 
             ### If the denominator of any of the inequalities is 0, replace calculated value (probably NaN) with NA
-            z1 <- (1:nrow(inequalities))[ abs( cs[,2] - cs[b[k]-s[k]+1,2] ) <= 10^(-10) ]
-            z2 <- (1:nrow(inequalities))[ abs( cs[,2] + cs[b[k]-s[k]+1,2] ) <= 10^(-10) ]
-            inequalities[ z1, 1 ] <- NA
-            inequalities[ z2, 2 ] <- NA
-            inequalities_list <- c( inequalities_list, inequalities[ !is.na( inequalities ) ] )
-            inequalities_signs <- c( inequalities_signs, signs[ !is.na( inequalities ) ] )
+            nas1 <- (1:nrow(inequalities))[ abs(cs[,2] - cs[b[k]-s[k]+1, 2]) <= 10^(-10) ]
+            nas2 <- (1:nrow(inequalities))[ abs(cs[,2] + cs[b[k]-s[k]+1, 2]) <= 10^(-10) ]
+            inequalities[ nas1, 1 ] <- NA
+            inequalities[ nas2, 2 ] <- NA
+            inequalities_list <- c(inequalities_list, inequalities[ !is.na(inequalities) ])
+            inequalities_signs <- c(inequalities_signs, signs[ !is.na(inequalities) ])
 
           ### Otherwise, we need |C(b)| > +/- C(t) for all t
           } else {
@@ -166,13 +163,13 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
             signs <- (-d[k]) * signs ## multiply by -d[1]
 
             ### If the denominator of any of the inequalities is 0, replace calculated value (probably NaN) with NA
-            z1 <- (1:nrow(inequalities))[ abs( cs2[,2] - cs[b[k]-s[k]+1,2] ) <= 10^(-10) ]
-            z2 <- (1:nrow(inequalities))[ abs( cs2[,2] + cs[b[k]-s[k]+1,2] ) <= 10^(-10) ]
-            inequalities[ z1, 1 ] <- NA
-            inequalities[ z2, 2 ] <- NA
+            nas1 <- (1:nrow(inequalities))[ abs(cs2[,2] - cs[b[k] - s[k] + 1, 2]) <= 10^(-10) ]
+            nas2 <- (1:nrow(inequalities))[ abs(cs2[,2] + cs[b[k] - s[k] + 1, 2]) <= 10^(-10) ]
+            inequalities[nas1, 1] <- NA
+            inequalities[nas2, 2] <- NA
 
-            inequalities_list <- c( inequalities_list, inequalities[ !is.na( inequalities ) ] )
-            inequalities_signs <- c( inequalities_signs, signs[ !is.na( inequalities ) ] )
+            inequalities_list <- c(inequalities_list, inequalities[ !is.na(inequalities) ])
+            inequalities_signs <- c(inequalities_signs, signs[ !is.na(inequalities) ])
           }
         }
       }
@@ -181,8 +178,8 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL, cps2=NUL
   }
 
   ### Find which values of phi satisfy all inequalities
-  max_lower_bound <- max( inequalities_list[ inequalities_signs==1 ] )
-  min_upper_bound <- min( inequalities_list[ inequalities_signs==-1 ] )
+  max_lower_bound <- max(inequalities_list[ inequalities_signs==1 ], na.rm=TRUE)
+  min_upper_bound <- min(inequalities_list[ inequalities_signs==-1 ], na.rm=TRUE)
   
-  return( c( max_lower_bound, min_upper_bound ) )
+  return( c(max_lower_bound, min_upper_bound) )
 }

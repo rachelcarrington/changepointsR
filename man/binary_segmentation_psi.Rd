@@ -18,36 +18,49 @@ binary_segmentation_psi(
 )
 }
 \arguments{
-\item{y}{A numeric vector of data.}
+\item{y}{Numeric vector of data.}
 
 \item{results}{Output of binary_segmentation function; can be NULL.}
 
-\item{nus}{List of nu's for each detected changepoint.}
+\item{nus}{List of nu's for each detected changepoint. See details.}
 
-\item{threshold}{Minimum threshold for CUSUM statistic for changepoint detection; ignored if results specified.}
+\item{threshold}{Numeric; minimum threshold for CUSUM statistic for changepoint detection. Ignored if results specified.}
 
-\item{maxiter}{Max. number of changepoints to find; ignored if results specified; otherwise defaults to n-1.}
+\item{maxiter}{Number of changepoints to find. Ignored if results specified; otherwise defaults to \code{length(y) - 1}.}
 
-\item{eps0}{Hyperparameter for calculating S.}
+\item{eps0}{Hyperparameter for calculating S. (Details.)}
 
-\item{sigma2}{Variance of y. If unknown, it can be estimated within the function.}
+\item{sigma2}{Variance of \code{y}. If unknown, it can be estimated within the function.}
 
-\item{h}{Window size. If NULL, the window is taken to be ...}
+\item{h}{Window size. See details.}
 
-\item{first_cp_only}{Logical. Should be TRUE if the condition is that the changepoint of interest is in the model;
-FALSE if the condition is that all changepoints are the same.}
+\item{first_cp_only}{Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model;
+if \code{FALSE}, condition on all changepoints. Defaults to \code{TRUE} if \code{h} is supplied, and \code{FALSE} otherwise.}
 
-\item{num_pvals}{Integer. Maximum number of p-values to calculate; defaults to n-1 if NULL.}
+\item{num_pvals}{Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}.}
 }
 \value{
-A list containing: the vector of changepoints and the vector of p-values.
+A list containing:
+\itemize{
+\item \code{b} Numeric vector of changepoints
+\item \code{p_value} Numeric vector of p-values
+}
 }
 \description{
 Calculate p-values associated with detected changepoints for binary segmentation;
 uses method of Jewell et al.
 }
 \details{
-...
+Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
+\itemize{
+\item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. If \code{nus = NULL} but \code{h} is supplied,
+then the value of \eqn{\nu} for each changepoint will be calculated using this assumption.
+\item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. If \eqn{\tau_j} is the first
+changepoint, then \eqn{\tau_{j-1}} is taken to be 0; if it is the last changepoint, \eqn{\tau_{j+1}} is taken to be
+\code{length(y)}. If \code{nus = NULL} and \code{h = NULL}, then the value of \eqn{\nu} for each changepoint will be calculated
+using this assumption.
+}
+Alternatively \code{nus} can be specified manually.
 }
 \examples{
 set.seed(100)

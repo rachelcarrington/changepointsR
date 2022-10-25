@@ -1,15 +1,16 @@
 #' Calculate vector of CUSUM statistics for data y, in terms of phi
 #'
-#' @description Used inside binary_segmentation_psi (etc.)
+#' @description Used inside \code{binary_segmentation_psi} (etc.)
+#' 
+#' @param y Numeric vector of data.
+#' @param nu Numeric vector.
+#' @param nu2 Numeric; value of the squared 2-norm of \code{nu}.
+#' @param nuTy Value of nu^T y.
+#' @param s Starting point for calculating CUSUM statistics, defaults to 1.
+#' @param e Ending point for calculating CUSUM statistics, degaults to \code{length(y)}.
 #'
-#' @param y Vector of data
-#' @param nu nu
-#' @param nu2 Value of ||nu||_2^2
-#' @param nuTy Value of nu^T y
-#' @param s Starting point for calculating CUSUM statistics, defaults to 1
-#' @param e Ending point for calculating CUSUM statistics, degaults to n
-#'
-#' @return Returns n x 2 matrix s.t. cusum_phi_vec(y)^T (1,phi) = cusm(y'(phi))
+#' @return Returns \code{length(y)} x 2 matrix such that 
+#' \code{cusum_phi_vec(y, nu)^T %*% c(1, phi) = cusum(y_phi(y, nu, phi))}.
 #' @export
 #'
 #' @examples
@@ -22,16 +23,18 @@
 #'
 cusum_phi_vec <- function( y, nu, nu2=NULL, nuTy=NULL, s=1, e=length(y) ){
 
-  if ( is.null( nu2 ) ){
-    nu2 <- sum( nu^2 )
+  if ( is.null(nu2) ){
+    nu2 <- sum(nu^2)
   }
-  if ( is.null( nuTy ) ){
-    nuTy <- as.numeric( t(nu) %*% y )
+
+  if ( is.null(nuTy) ){
+    nuTy <- as.numeric(t(nu) %*% y)
   }
+
   cusum_nu <- cusum(nu, s, e)
   cst <- cusum(y, s, e) - nuTy/nu2 * cusum_nu
   coef <- 1/nu2 * cusum_nu
 
-  return( cbind( cst, coef ) )
+  return( cbind(cst, coef) )
 
 }

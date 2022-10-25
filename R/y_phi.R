@@ -19,10 +19,8 @@
 #'
 y_phi <- function( y, nu, phi, nu2=NULL, nuTy=NULL ){
 
-  ## Calculate y'(phi), given y, nu and phi
-
   if ( is.null(nu2) ){
-    nu2 <- sum( nu^2 )
+    nu2 <- sum(nu^2)
   }
   if ( is.null(nuTy) ){
     nuTy <- as.numeric( t(nu) %*% y )

@@ -15,19 +15,19 @@ wild_binary_segmentation(
 )
 }
 \arguments{
-\item{y}{A vector of data}
+\item{y}{Numeric vector of data.}
 
-\item{num_rand_samples}{Number of random intervals to use (ignored if random_samples supplied)}
+\item{num_rand_samples}{Number of random intervals to use. Ignored if \code{random_samples} is supplied.}
 
-\item{random_samples}{N x 2 matrix of random intervals}
+\item{random_samples}{N x 2 matrix of random intervals.}
 
-\item{threshold}{Minimum threshold for determining changepoint candidates}
+\item{threshold}{Minimum threshold for determining changepoint candidates.}
 
-\item{maxiter}{Maximum number of changepoints to find}
+\item{maxiter}{Maximum number of changepoints to find.}
 
-\item{seeded}{Logical; if TRUE, seeded binary segmentation is used}
+\item{seeded}{Logical; if \code{TRUE}, seeded binary segmentation is used.}
 
-\item{decay}{Decay parameter for seeded binary segmentation}
+\item{decay}{Decay parameter for seeded binary segmentation. Only used if \code{seeded = TRUE}.}
 }
 \value{
 A list

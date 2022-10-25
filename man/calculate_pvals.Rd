@@ -24,30 +24,31 @@ calculate_pvals(
 )
 }
 \arguments{
-\item{y}{Numeric vector of data}
+\item{y}{Numeric vector of data.}
 
-\item{method}{Method used to generate changepoints. Options: "bs" for binary segmentation,
-"wbs" for wild or seeded binary segmentation, "not" for narrowest over threshold.}
+\item{method}{Method used to generate changepoints. Options: \code{"bs"} for binary segmentation,
+\code{"wbs"} for wild or seeded binary segmentation, \code{"not"} for narrowest over threshold.}
 
-\item{results}{Output of changepoint algorithm.}
+\item{results}{Output of changepoint algorithm (either \code{binary_segmentation}, \code{wild_binary_segmentation}, or
+\code{narrowest_over_threshold}.}
 
-\item{N}{Positive integer. Number of random psi's to generate.}
+\item{N}{Positive integer. Number of random \eqn{\psi}'s to generate.}
 
 \item{nus}{List of nu's for each changepoint.}
 
-\item{threshold}{Scalar. Minimum threshold for changepoint detection. Ignored if results is specified.}
+\item{threshold}{Minimum threshold for changepoint detection. Ignored if \code{results} is specified.}
 
 \item{maxiter}{Positive integer. Maximum number of changepoints to find in changepoint algorithm. Ignored if
-results is specified}
+\code{results} is specified}
 
-\item{h}{Positive integer (>=2) or NULL. Window size. If NULL then the changepoints either side of the
+\item{h}{Positive integer (>=2) or \code{NULL}. Window size. If \code{NULL} then the changepoints either side of the
 changepoint of interest are used to define the window.}
 
-\item{sigma2}{Scalar. Variance of y.}
+\item{sigma2}{Variance of \code{y}.}
 
-\item{eps0}{Scalar. Hyperparameter for calculating S.}
+\item{eps0}{Hyperparameter for calculating S.}
 
-\item{include_original}{Logical. Whether to include the psi value corresponding to the observed data in place of
+\item{include_original}{Logical. Whether to include the \eqn{\psi} value corresponding to the observed data in place of
 one of the ranom samples.}
 
 \item{num_pvals}{Integer. Number of changepoints to calculate p-values for.}
@@ -55,19 +56,31 @@ one of the ranom samples.}
 \item{random_samples}{Matrix containing random intervals. For wild binary segmentation and narrowest over
 threshold only.}
 
-\item{num_rand_samples}{Number of random intervals to use for WBS/NOT. Ignored if random_samples is specified,
-method = "bs", or seeded = TRUE.}
+\item{num_rand_samples}{Number of random intervals to use for wild binary segmentation or narrowest over threshold.
+Ignored if \code{random_samples} is specified, \code{method = "bs"}, or \code{seeded = TRUE}.}
 
-\item{seeded}{Logical. If TRUE, use seeded binary segmentation rather than wild binary segmentation. Only used if
-method = "wbs".}
+\item{seeded}{Logical. If \code{TRUE}, use seeded binary segmentation rather than wild binary segmentation. Only used if
+\code{method = "wbs"}.}
 
-\item{decay}{Decay parameter for seeded binary segmentation. Only used if method = "wbs" and seeded = TRUE.}
+\item{decay}{Decay parameter for seeded binary segmentation. Only used if \code{method = "wbs"} and \code{seeded = TRUE}.}
 }
 \value{
 A vector of p-values
 }
 \description{
 Calculate p-values for change in mean model
+}
+\details{
+Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
+\itemize{
+\item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. If \code{nus = NULL} but \code{h} is supplied,
+then the value of \eqn{\nu} for each changepoint will be calculated using this assumption.
+\item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. If \eqn{\tau_j} is the first
+changepoint, then \eqn{\tau_{j-1}} is taken to be 0; if it is the last changepoint, \eqn{\tau_{j+1}} is taken to be
+\code{length(y)}. If \code{nus = NULL} and \code{h = NULL}, then the value of \eqn{\nu} for each changepoint will be calculated
+using this assumption.
+}
+Alternatively \code{nus} can be specified manually.
 }
 \examples{
 # to do

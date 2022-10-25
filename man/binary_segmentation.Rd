@@ -9,17 +9,26 @@ binary_segmentation(y, threshold = NULL, maxiter = NULL)
 \arguments{
 \item{y}{A numeric vector.}
 
-\item{threshold}{Threshold for determining changepoint candidates; defaults to sqrt(2*log(n)*var(y)).}
+\item{threshold}{Threshold for determining changepoint candidates; defaults to \code{sqrt(2*log(n)*var(y))}.}
 
-\item{maxiter}{Maximum number of changepoints to find; defaults to length(y) - 1}
+\item{maxiter}{Maximum number of changepoints to find; defaults to \code{length(y) - 1}.}
 }
 \value{
-A list.
+A list:
+\itemize{
+\item \code{results} Dataframe containing segmented intervals, changepoints, directions of change, ...
+\item \code{changepoints} Changepoints
+\item \code{threshold} Value of \code{threshold}
+\item \code{maxiter} Value of \code{maxiter}
+}
 }
 \description{
 Binary segmentation algorithm for detecting changepoints, in the change in mean model.
-The algorithm terminates when either (i) the maximum number of changepoints have been found; or
-(ii) there are no points remaining where the CUSUM statistic is above the threshold.
+The algorithm terminates when either
+\enumerate{
+\item the maximum number of changepoints has been found; or
+\item there are no remaining points where the CUSUM statistic is above the threshold.
+}
 }
 \examples{
 set.seed(10)

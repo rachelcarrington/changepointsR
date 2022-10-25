@@ -43,20 +43,23 @@ calculate_S_all_methods(
 
 \item{eps0}{...}
 
-\item{first_cp_only}{...}
+\item{first_cp_only}{Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model;
+if \code{FALSE}, condition on all changepoints. Defaults to \code{TRUE} if \code{h} is supplied, and \code{FALSE} otherwise.}
 
-\item{method}{One of "bs", "wbs", or "not": binary segmentation, wild/seeded binary segmentation, narrowest
-over threshold. Defaults to binary segmentation.}
+\item{method}{One of \code{"bs"} (binary segmentation), \code{"wbs"} (wild binary segmentation), or \code{"not"} (narrowest
+over threshold). Defaults to \code{"bs"}.}
 
 \item{rand_ints}{Matrix containing random intervals for changepoint algorithm. Ignored if results specified
-or method = "bs".}
+or \code{method = "bs"}.}
 
-\item{seeded}{For method = "wbs" only, whether to use seeded binary segmentation. (Logical.)}
+\item{seeded}{Logical. For \code{method = "wbs"} only, whether to use seeded binary segmentation.}
 
-\item{decay}{Decay parameter for seeded binary segmentation. Only used if method = "wbs" and seeded = TRUE.}
+\item{decay}{Decay parameter for seeded binary segmentation. Only used if \code{method = "wbs"} and \code{seeded = TRUE}.}
+
+\item{num_pvals}{Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}.}
 }
 \value{
-A dataframe containing intervals with the changepoints obtained when phi is in each interval.
+A dataframe containing intervals with the changepoints obtained when \eqn{\phi} is in each interval.
 }
 \description{
 A function for calculating the set of interest S.
