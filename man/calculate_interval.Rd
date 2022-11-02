@@ -11,12 +11,11 @@ calculate_interval(
   nu,
   nu2 = NULL,
   nuTy = NULL,
-  n.cp = NULL,
-  cs = NULL
+  n.cp = NULL
 )
 }
 \arguments{
-\item{y}{Numeric vector of data (ignored if cs & nuTy are supplied)}
+\item{y}{Numeric vector of data}
 
 \item{method}{Character string; \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
 \code{"not"} for narrowest over threshold.}
@@ -31,9 +30,9 @@ calculate_interval(
 
 \item{n.cp}{max. number of changepoints to detect of binary segmentation algorithm}
 
-\item{cs}{?}
-
 \item{threshold}{minimum changepoint threshold used in binary segmentation algorithm}
+
+\item{cs}{?}
 }
 \value{
 A 2-dimensional vector
