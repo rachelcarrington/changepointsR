@@ -2,7 +2,7 @@
 #'
 #' @description ...
 #'
-#' @param y Numeric vector of data (ignored if cs & nuTy are supplied)
+#' @param y Numeric vector of data
 #' @param method Character string; \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
 #' \code{"not"} for narrowest over threshold.
 #' @param results ...
@@ -19,13 +19,13 @@
 #' @examples
 #' x <- 0
 #'
-calculate_interval <- function(y, method, results, nu, nu2=NULL, nuTy=NULL, n.cp=NULL, cs=NULL ){
+calculate_interval <- function(y, method, results, nu, nu2=NULL, nuTy=NULL, n.cp=NULL ){
 
   if ( method=="bs" ){
 
     b <- results$results$b[ results$results$cp==1 ]
     d <- results$results$d[ results$results$cp==1 ]
-    interval <- calculate_interval_bs(y, nu, b, d, cs=cs, nu2=nu2, nuTy=nuTy, n.cp=n.cp)
+    interval <- calculate_interval_bs(y, nu, b, d, nu2=nu2, nuTy=nuTy, n.cp=n.cp)
 
   } else if ( method=="wbs" ){
     
