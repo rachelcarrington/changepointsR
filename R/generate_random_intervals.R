@@ -62,12 +62,12 @@ generate_random_intervals <- function( n, N, min_width=2 ){
 
     ### Just use all possible intervals
 
-    ri2 <- matrix( rep(min_width:n, n - min_width + 1), nrow=n - min_width + 1 )
+    ri2 <- matrix(rep(min_width:n, n - min_width + 1), nrow=n - min_width + 1)
     rand_ints <- cbind( rep(1:(n - min_width + 1), (n - min_width + 1):1),
                          as.vector(ri2[ lower.tri(ri2, diag=TRUE) ]) )
 
   }
 
-  return( rand_ints )
+  return(rand_ints)
 
 }
