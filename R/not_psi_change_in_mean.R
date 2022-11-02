@@ -1,21 +1,31 @@
 #' Post-selection inference for narrowest over threshold change in mean model.
 #'
-#' @description Calculates p-value for first detected changepoint, when the narrowest over threshold algorithm
-#' is applied to the change in mean model.
+#' @description For the change in mean model, using narrowest over threshold algorithm to detect changepoints.
+#' Calculate p-value for first detected changepoint.
 #'
 #' @param y Numeric vector of data.
-#' @param lambda Threshold for determining changepoint candidates.
+#' @param lambda Numeric; threshold for determining changepoint candidates.
 #' @param results Output from applying \code{narrowest_over_threshold} to \code{y} (optional).
 #' @param max_cps Maximum number of changepoints for the algorithm to detect; defaults to 1. Ignored if \code{results}
 #' specified.
 #' @param N Number of random intervals; defaults to 1000. Ignored if \code{results} or \code{rand_ints} specified.
-#' @param rand_ints Random intervals for narrowest over threshold algorithm. Ignored if \code{results} specified.
+#' @param rand_ints Matrix of random intervals for narrowest over threshold algorithm. Ignored if \code{results} specified.
 #'
-#' @return List of results ...
+#' @return List:
+#' \itemize{
+#' \item \code{b} Vector of changepoints.
+#' \item \code{d} Vector containing directions of change for each changepoint (\code{1} for a positive change, \code{-1} for a 
+#' negative change.
+#' \item \code{p_value} P-value.
+#' \item \code{S} Dataframe containing intervals for \eqn{\phi} and changepoints obtained when \eqn{\phi} is in each interval.
+#' }
 #' @export
 #'
 #' @examples
-#' # ...
+#' set.seed(100)
+#' y <- rnorm(100) + c(rep(1,20), rep(-1,20), rep(1,20), rep(-1,20), rep(1,20))
+#' results <- narrowest_over_threshold(y, 4, N=50)
+#' not_psi_change_in_mean(y, 4, results)
 #'
 not_psi_change_in_mean <- function( y, lambda, results=NULL, max_cps=1, N=1000, rand_ints=NULL ){
 
@@ -42,73 +52,11 @@ not_psi_change_in_mean <- function( y, lambda, results=NULL, max_cps=1, N=1000, 
     nu[ (cps[j]+1):cps[j+1] ] <- -1/(cps[j+1] - cps[j])
 
     nu2 <- 1/(cps[j] - cps[j-1]) + 1/(cps[j+1] - cps[j])
-    nuTy <- as.numeric( t(nu) %*% y )
-
-    cps2 <- cps[(j-1):(j+1)]
-      ## will be useful later; nu is constant on any intervals which don't contain one of these points
+    nuTy <- as.numeric(t(nu) %*% y)
 
     rand_ints <- results$rand_ints
 
-    ### Calculate interval s.t. the given values of b & d are obtained
-    interval <- calculate_interval_not(y, nu, results, cps2=cps2)
-      ## need to rewrite this to use vectorised cs
-    S <- data.frame( matrix( c(interval, as.matrix(c(b, d, s, e))), nrow=1 ) )
-    colnames(S) <- c("lower_lim", "upper_lim", paste0("b", 1:length(b)), paste0("d", 1:length(d)),
-                     paste0("s", 1:length(s)), paste0("e", 1:length(e)))
-
-    ### Find other intervals
-    #### !!!! Need to deal with the problem that the # of CPs may vary between rows of S
-    eps <- 0.01
-    while ( max(S$upper_lim) < Inf ){
-      phi <- max(S$upper_lim) + eps
-      y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
-      r2 <- narrowest_over_threshold(y2, lambda, max_cps=max_cps, rand_ints=results$rand_ints)
-      if ( nrow(r2$results) >= 1 ){
-        b2 <- r2$results$b
-        d2 <- r2$results$d
-        s2 <- r2$results$s
-        e2 <- r2$results$e
-      } else {
-        b2 <- d2 <- s2 <- e2 <- NA
-      }
-
-      interval <- calculate_interval_not_multiple_cps_2(y, nu, r2, cps2)
-
-      ### Check this interval is the next one
-      if ( abs(interval[1] - max(S$upper_lim)) < 10^(-10) ){
-        S <- rbind( S, c(interval, b2, d2, s2, e2) )
-        eps <- 0.01
-      } else {
-        eps <- eps/2
-      }
-
-    }
-
-    eps <- 0.01
-    while ( min(S$lower_lim) > -Inf ){
-      phi <- min(S$lower_lim) - eps
-      y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
-      r2 <- narrowest_over_threshold(y2, lambda, max_cps=max_cps, rand_ints=results$rand_ints)
-      if ( nrow(r2$results) >= 1 ){
-        b2 <- r2$results$b
-        d2 <- r2$results$d
-        s2 <- r2$results$s
-        e2 <- r2$results$e
-      } else {
-        b2 <- d2 <- s2 <- e2 <- NA
-      }
-
-      interval <- calculate_interval_not(y, nu, r2, cps2)
-
-      ### Check this interval is the next one
-      if ( abs(interval[2] - min(S$lower_lim)) < 10^(-10) ){
-        S <- rbind( S, c(interval, b2, d2, s2, e2) )
-        eps <- 0.01
-      } else {
-        eps <- eps/2
-      }
-
-    }
+    S <- calculate_S_all_methods(y, nu, results, method="not")
 
     ### Calculate probability
 
@@ -117,7 +65,7 @@ not_psi_change_in_mean <- function( y, lambda, results=NULL, max_cps=1, N=1000, 
     S2 <- S2[ !is.na( S2[,1] ), ]
     b_sorted <- sort(b)
     for ( i in 1:nrow(S) ){
-      if ( !is.na(sum(S[i,3:(2+length(b))])) & sum(abs(sort( S[i,3:(2+length(b))]) - b_sorted)) < 10^(-10)  ){
+      if ( !is.na(sum(S[i,3:(2+length(b))])) & sum(abs(sort(S[i,3:(2+length(b))]) - b_sorted)) < 10^(-10)  ){
         S2 <- rbind(S2, S[i,])
       }
     }
@@ -138,6 +86,8 @@ not_psi_change_in_mean <- function( y, lambda, results=NULL, max_cps=1, N=1000, 
     }
 
     p_value <- P_both / P_phi_in_S
+
+    S <- S[ order(S[,1]), ]
 
     return( list(b=b, d=d, p_value=p_value, S=S) )
 
