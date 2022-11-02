@@ -52,7 +52,7 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL){
 
   inequalities_list <- inequalities_signs <- numeric(0)
 
-  if ( nrow( results$results ) == 0 ){
+  if ( nrow(results$results) == 0 ){
 
   ### If there are no CPs detected, we require |C_(s,e) (t)| < lambda for all (s,e) and all t
 
@@ -78,7 +78,7 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL){
       } else { ## if k > 1
         smaller_intervals <- rand_ints[ widths < cp_widths[k] & widths >= cp_widths[k-1],,drop=FALSE ] 
           ## we don't need to consider intervals narrower than previous CP-containing intervals as these have already been checked
-        for ( j in 1:k ){
+        for ( j in 1:(k-1) ){
           smaller_intervals <- smaller_intervals[ !( b[j] >= smaller_intervals[,1] & b[j] < smaller_intervals[,2] ),,drop=FALSE ] 
             ## delete intervals containing previous CPs
         }
@@ -173,6 +173,28 @@ calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL){
           }
         }
       }
+    }
+
+    ### Make sure no more changepoints are detected
+    if ( length(b) < results$maxiter ){
+
+      ### Get intervals we haven't considered
+      k <- length(b)
+      remaining_intervals <- rand_ints[ widths >= (e[k] - s[k] + 1),,drop=FALSE ]
+      for ( j in 1:k ){
+        remaining_intervals <- remaining_intervals[ !(b[j] >= remaining_intervals[,1] & b[j] < remaining_intervals[,2]),,drop=FALSE ]
+      }
+
+      ### Check that they are below the threshold
+      if ( nrow(remaining_intervals) >= 1 ){
+        for ( j in 1:nrow(remaining_intervals) ){  
+          cs <- cusum_phi_vec(y, nu, nu2=nu2, nuTy=nuTy, s=remaining_intervals[j,1], e=remaining_intervals[j,2])
+          cs <- cs[ abs(cs[,2]) > 10^(-10),,drop=FALSE ]
+          inequalities_list <- c( inequalities_list, (lambda - cs[,1])/cs[,2], ((-1)*lambda - cs[,1])/cs[,2] )
+          inequalities_signs <- c( inequalities_signs, ifelse( cs[,2] > 0, -1, 1 ), ifelse( cs[,2] > 0, 1, -1 ) )
+        }
+      }
+
     }
 
   }
