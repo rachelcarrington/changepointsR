@@ -65,7 +65,7 @@ calculate_S_all_methods <- function( y, nu, results=NULL, b=NULL, d=NULL, nu2=NU
     threshold <- results$threshold
   }
 
-  if ( method!="bs" ){
+  if ( method != "bs" ){
     if ( is.null(rand_ints) ){
       rand_ints <- results$rand_ints
     }
@@ -168,7 +168,7 @@ calculate_S_all_methods <- function( y, nu, results=NULL, b=NULL, d=NULL, nu2=NU
       colnames(S) <- c("lower_lim", "upper_lim", "b1", "d1")
     }
 
-    ncp_max <- max(length(b),1)
+    ncp_max <- max(length(b), 1)
 
     ### Find other intervals
     eps <- eps0
