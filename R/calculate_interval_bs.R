@@ -4,14 +4,6 @@
 #' Option to only consider part of (b, d), e.g. if we just want b1 & d1 to be specified, & don't care about
 #' later values
 #'
-#' @details (possibly outdated)
-#' At present this ignores the threshold and just matches the number of CPs found (currently updating)
-#' If threshold is also supplied, this will also be used.
-#' Otherwise, if threshold is supplied (but not n.cp), the interval returned will be that for which the complete
-#' b and d match those given, when BS is given this threshold. If threshold is not supplied, it will be assumed
-#' that BS is run with a fixed number of iterations. If both n.cp and threshold are supplied, it will be assumed that
-#' n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
-#'
 #' @param y Numeric vector of data.
 #' @param nu ...
 #' @param b Vector of changepoints detected by binary segmentation algorithm.
@@ -53,7 +45,7 @@ calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NU
     ### We need all |Ct|'s to be < threshold
     ### We can ignore those for which cs[,2] = 0, since these are constant in phi
     x <- ( abs(cs[,2]) > 10^(-10) )
-    inequalities <- c( (threshold - cs[x,1]) / cs[x,2], (-threshold - cs[x,1]) / cs[x,2] )
+    inequalities <- c( (threshold - cs[x,1]) / cs[x,2], ((-1)*threshold - cs[x,1]) / cs[x,2] )
     signs <- c( ifelse( cs[x,2] > 0, -1, 1 ), ifelse( cs[x,2] > 0, 1, -1 ) )
     max_lower_bound <- max( inequalities[ signs==1] )
     min_upper_bound <- min( inequalities[ signs==-1] )
@@ -251,7 +243,7 @@ calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NU
     }
 
     x <- abs(cs2[,2]) > 10^(-10)
-    inequalities <- c( (threshold - cs2[x,1]) / cs2[x,2], (-threshold - cs2[x,1]) / cs2[x,2] )
+    inequalities <- c( (threshold - cs2[x,1]) / cs2[x,2], ((-1)*threshold - cs2[x,1]) / cs2[x,2] )
     signs <- c( ifelse( cs2[x,2] > 0, -1, 1 ), ifelse( cs2[x,2] > 0, 1, -1 ) )
     max_lower_bound <- max( c(max_lower_bound, inequalities[ signs==1 ]), na.rm=TRUE  )
     min_upper_bound <- min( c(min_upper_bound, inequalities[ signs==-1 ]), na.rm=TRUE  )
