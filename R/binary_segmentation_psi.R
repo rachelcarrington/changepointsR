@@ -25,7 +25,10 @@
 #' @param h Window size. See details.
 #' @param first_cp_only Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model; 
 #' if \code{FALSE}, condition on all changepoints. Defaults to \code{TRUE} if \code{h} is supplied, and \code{FALSE} otherwise.
-#' @param num_pvals Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}.
+#' @param num_pvals Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}. If the number of changepoints
+#' detected by the binary segmentation algorithm is less than or equal to \code{num_pvals}, then p-values will be calculated for all 
+#' changepoints. If \code{num_pvals} is less than the number of changepoints detected, p-values will only be calculated for the first
+#' \code{num_pvals} changepoints, in order of detection.
 #'
 #' @return A list containing:
 #' \itemize{
@@ -65,9 +68,7 @@ binary_segmentation_psi <- function( y, results=NULL, nus=NULL, threshold=NULL, 
 
   if ( length(b)==0 ){
     stop("No changepoints detected.")
-  } else if ( is.null(num_pvals) ){
-    num_pvals <- length(b)
-  } else if ( length(b) < num_pvals ){
+  } else if ( is.null(num_pvals)  || length(b) < num_pvals ){
     num_pvals <- length(b)
   }
 
@@ -118,14 +119,14 @@ binary_segmentation_psi <- function( y, results=NULL, nus=NULL, threshold=NULL, 
       nu2 <- sum(nu^2)
     }
 
-    nuTy <- as.numeric( t(nu) %*% y )
+    nuTy <- as.numeric(t(nu) %*% y)
 
     if ( jj == 1 ){
-      S <- calculate_S_all_methods( y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
-                                    nuTy=nuTy, first_cp_only=first_cp_only )
+      S <- calculate_S_all_methods(y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
+                                    nuTy=nuTy, first_cp_only=first_cp_only)
     } else {
-      S <- calculate_S_all_methods( y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
-                                    nuTy=nuTy )
+      S <- calculate_S_all_methods(y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
+                                    nuTy=nuTy)
     }
 
 
