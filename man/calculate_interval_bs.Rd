@@ -9,7 +9,6 @@ calculate_interval_bs(
   nu,
   b,
   d,
-  cs = NULL,
   nu2 = NULL,
   nuTy = NULL,
   threshold = NULL,
@@ -17,29 +16,25 @@ calculate_interval_bs(
 )
 }
 \arguments{
-\item{y}{vector of data (ignored if cs & nuTy are supplied)}
+\item{y}{Numeric vector of data.}
 
 \item{nu}{...}
 
-\item{b}{vector of changepoints detected by binary segmentation algorithm}
+\item{b}{Vector of changepoints detected by binary segmentation algorithm.}
 
-\item{d}{directions of changepoints detected by binary segmentation algorithm}
+\item{d}{Directions of changepoints detected by binary segmentation algorithm. Vector whose entries are all equal to \code{1} or \code{-1}.}
 
-\item{cs}{...}
+\item{nu2}{Value of the squared 2-norm of \code{nu}.}
 
-\item{nu2}{value of ||nu||_2^2}
+\item{threshold}{Minimum changepoint threshold used in binary segmentation algorithm.}
 
-\item{nuTy}{value of nu^T y}
-
-\item{threshold}{minimum changepoint threshold used in binary segmentation algorithm}
-
-\item{n.cp}{max. number of changepoints to detect of binary segmentation algorithm}
+\item{n.cp}{Maximum number of changepoints to detect of binary segmentation algorithm.}
 }
 \value{
 A 2-dimensional vector
 }
 \description{
-Find values of phi which satisfy the required inequalities so that the BS algorithm returns (b, d);
+Find values of phi which satisfy the required inequalities so that the binary segmentation algorithm returns (b, d);
 Option to only consider part of (b, d), e.g. if we just want b1 & d1 to be specified, & don't care about
 later values
 }
@@ -53,6 +48,6 @@ that BS is run with a fixed number of iterations. If both n.cp and threshold are
 n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
 }
 \examples{
-x <- 0
+# to do
 
 }
