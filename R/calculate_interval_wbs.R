@@ -62,8 +62,8 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
   }
 
   
-  if ( is.null( n.cp ) ){
-    if ( is.null( threshold ) ){
+  if ( is.null(n.cp) ){
+    if ( is.null(threshold) ){
       n.cp <- length(b) ## assume num. of iterations was specified since threshold is not given
     } else {
       n.cp <- length(y) ## just use threshold
@@ -108,11 +108,11 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
 
     #### (-d1) * C(b1) > threshold (0 if not given)
     tau <- b[1] - s[1] + 1
-    if ( abs( cs[tau,2] ) > 10^(-10) ){
+    if ( abs(cs[tau,2]) > 10^(-10) ){
       if ( is.null(threshold) ){
         inequalities <- (-1) * cs[tau,1] / cs[tau,2]
       } else {
-        inequalities <- (-d[1]*threshold - cs[tau,1]) / cs[tau,2]
+        inequalities <- (-d[1] * threshold - cs[tau,1]) / cs[tau,2]
       }
       signs <- ifelse( cs[tau,2] > 0, -d[1], d[1] )
       if ( signs == 1 ){
@@ -127,8 +127,8 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
       min_upper_bound <- Inf
     }
     
-    #### | C( b1 ) | > +/- C( t ) for t \neq b1, on interval (s[1], e[1])
-    inequalities <- cbind( (cs[-tau,1] - cs[tau,1])/(-cs[-tau,2] + cs[tau,2] ), 
+    #### | C(b1) | > +/- C(t) for t \neq b1, on interval (s[1], e[1])
+    inequalities <- cbind( (cs[-tau,1] - cs[tau,1])/(-cs[-tau,2] + cs[tau,2]), 
                            (-1)*(cs[-tau,1] + cs[tau,1])/(cs[-tau,2] + cs[tau,2]) )
     signs <- cbind( ifelse( -cs[-tau,2] + cs[tau,2] > 0, -d[1], d[1] ),
                     ifelse( cs[-tau,2] + cs[tau,2] > 0, -d[1], d[1] ) )
@@ -138,8 +138,8 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
     signs[ abs(cs[-tau,2] + cs[tau,2]) <= 10^(-10), 2 ] <- NA
     
     #### Update bounds
-    max_lower_bound <- max( c( max_lower_bound, inequalities[ signs==1 ] ), na.rm=TRUE )
-    min_upper_bound <- min( c( min_upper_bound, inequalities[ signs==-1 ] ), na.rm=TRUE )
+    max_lower_bound <- max( c(max_lower_bound, inequalities[ signs == 1 ]), na.rm=TRUE )
+    min_upper_bound <- min( c(min_upper_bound, inequalities[ signs == -1 ]), na.rm=TRUE )
 
 
     #### Check other intervals: | C_{s1, e1}( b1 ) | > |C_{s,e} ( t )| for all s, e, t
@@ -147,7 +147,7 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
 
       s2 <- rand_ints[ind,1]
       e2 <- rand_ints[ind,2]
-      if ( sum( abs( c(s[1],e[1]) - c(s2,e2) ) ) != 0 ){
+      if ( sum( abs(c(s[1],e[1]) - c(s2,e2)) ) != 0 ){
 
         cs2 <- cusum_phi_vec(y, nu, nu2, nuTy, s=s2, e=e2)
         inequalities <- cbind( (cs2[,1] - cs[tau,1])/(-cs2[,2] + cs[tau,2] ), 
@@ -160,8 +160,8 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
         signs[ abs(cs2[,2] + cs[tau,2]) <= 10^(-10), 2 ] <- NA
     
         #### Update bounds
-        max_lower_bound <- max( c( max_lower_bound, inequalities[ signs==1 ] ), na.rm=TRUE )
-        min_upper_bound <- min( c( min_upper_bound, inequalities[ signs==-1 ] ), na.rm=TRUE )
+        max_lower_bound <- max( c(max_lower_bound, inequalities[ signs==1 ]), na.rm=TRUE )
+        min_upper_bound <- min( c(min_upper_bound, inequalities[ signs==-1 ]), na.rm=TRUE )
 
       }
 
@@ -171,12 +171,12 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
     ### For later CPs, if any:
     if ( n.cp > 1 & length(b) > 1 ){
       
-      for ( k in 2:min( c( n.cp, length(b) ) ) ){
+      for ( k in 2:min(n.cp, length(b)) ){
 
         #### We need -d[k]*C(b[k]) to be greater than 0 or the threshold
         cs <- cusum_phi_vec(y, nu, nu2, nuTy, s=s[k], e=e[k])
         tau <- b[k] - s[k] + 1
-        if ( abs( cs[tau,2] ) > 10^(-10) ){
+        if ( abs(cs[tau,2]) > 10^(-10) ){
            if ( is.null(threshold) ){
             inequalities <- (-1) * cs[tau,1] / cs[tau,2]
           } else {
@@ -205,7 +205,7 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
         min_upper_bound <- min( min_upper_bound, min( inequalities[ signs==-1 ] ), na.rm=TRUE )
 
         
-        #### Check other intervals: | C_{s1, e1}( b1 ) | > |C_{s,e} ( t )| for all s, e, t
+        #### Check other intervals: | C_{s1, e1}(b1) | > |C_{s,e} (t)| for all s, e, t
 
         #### Remove intervals which contain the previous changepoint
         rand_ints <- rand_ints[ !( rand_ints[,1] <= b[k-1] & rand_ints[,2] > b[k-1] ),,drop=FALSE ]
@@ -215,7 +215,7 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
 
             s2 <- rand_ints[ind,1]
             e2 <- rand_ints[ind,2]
-            if ( sum( abs( c(s[1],e[1]) - c(s2,e2) ) ) != 0 ){
+            if ( sum( abs(c(s[1], e[1]) - c(s2, e2)) ) != 0 ){
 
               cs2 <- cusum_phi_vec(y, nu, nu2, nuTy, s=s2, e=e2)
               inequalities <- cbind( (cs2[,1] - cs[tau,1])/(-cs2[,2] + cs[tau,2] ), 
@@ -257,8 +257,8 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
           x <- abs(cs[,2]) > 10^(-10) ## if cs[i,2] = 0, then this inequality is constant in phi
           inequalities <- c( (threshold - cs[x,1]) / cs[x,2], (-threshold - cs[x,1]) / cs[x,2] )
           signs <- c( ifelse( cs[x,2] > 0, -1, 1 ), ifelse( cs[x,2] > 0, 1, -1 ) )
-          max_lower_bound <- max( c( max_lower_bound, inequalities[ signs==1] ) )
-          min_upper_bound <- min( c( min_upper_bound, inequalities[ signs==-1] ) )
+          max_lower_bound <- max( c(max_lower_bound, inequalities[ signs == 1 ]) )
+          min_upper_bound <- min( c(min_upper_bound, inequalities[ signs == -1 ]) )
 
         }
       }
@@ -270,5 +270,5 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
     
   ### Inequalities are all satisfied by phi s.t. max_lower_bound < phi < min_upper_bound
   
-  return( c( max_lower_bound, min_upper_bound ) )
+  return( c(max_lower_bound, min_upper_bound) )
 }
