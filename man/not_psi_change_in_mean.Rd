@@ -16,25 +16,35 @@ not_psi_change_in_mean(
 \arguments{
 \item{y}{Numeric vector of data.}
 
-\item{lambda}{Threshold for determining changepoint candidates.}
+\item{lambda}{Numeric; threshold for determining changepoint candidates.}
 
-\item{results}{Output of narrowest over threshold algorithm (optional).}
+\item{results}{Output from applying \code{narrowest_over_threshold} to \code{y} (optional).}
 
-\item{max_cps}{Maximum number of changepoints for the algorithm to detect; defaults to 1; ignored if results
+\item{max_cps}{Maximum number of changepoints for the algorithm to detect; defaults to 1. Ignored if \code{results}
 specified.}
 
-\item{N}{Number of random intervals; defaults to 1000; ignored if results or rand_ints specified.}
+\item{N}{Number of random intervals; defaults to 1000. Ignored if \code{results} or \code{rand_ints} specified.}
 
-\item{rand_ints}{Random intervals for narrowest over threshold algorithm; ignored if results specified.}
+\item{rand_ints}{Matrix of random intervals for narrowest over threshold algorithm. Ignored if \code{results} specified.}
 }
 \value{
-List of results ...
+List:
+\itemize{
+\item \code{b} Vector of changepoints.
+\item \code{d} Vector containing directions of change for each changepoint (\code{1} for a positive change, \code{-1} for a
+negative change.
+\item \code{p_value} P-value.
+\item \code{S} Dataframe containing intervals for \eqn{\phi} and changepoints obtained when \eqn{\phi} is in each interval.
+}
 }
 \description{
-Calculates p-value for first detected changepoint, when the narrowest over threshold algorithm
-is applied to the change in mean model.
+For the change in mean model, using narrowest over threshold algorithm to detect changepoints.
+Calculate p-value for first detected changepoint.
 }
 \examples{
-# ...
+set.seed(100)
+y <- rnorm(100) + c(rep(1,20), rep(-1,20), rep(1,20), rep(-1,20), rep(1,20))
+results <- narrowest_over_threshold(y, 4, N=50)
+not_psi_change_in_mean(y, 4, results)
 
 }
