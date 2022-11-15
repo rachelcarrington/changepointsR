@@ -37,7 +37,10 @@ binary_segmentation_psi(
 \item{first_cp_only}{Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model;
 if \code{FALSE}, condition on all changepoints. Defaults to \code{TRUE} if \code{h} is supplied, and \code{FALSE} otherwise.}
 
-\item{num_pvals}{Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}.}
+\item{num_pvals}{Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}. If the number of changepoints
+detected by the binary segmentation algorithm is less than or equal to \code{num_pvals}, then p-values will be calculated for all
+changepoints. If \code{num_pvals} is less than the number of changepoints detected, p-values will only be calculated for the first
+\code{num_pvals} changepoints, in order of detection.}
 }
 \value{
 A list containing:
