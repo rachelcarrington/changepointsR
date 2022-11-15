@@ -2,7 +2,7 @@
 
 export(binary_segmentation)
 export(binary_segmentation_psi)
-export(calculate_S_all_methods)
+export(calculate_S)
 export(calculate_interval)
 export(calculate_interval_bs)
 export(calculate_interval_not)
