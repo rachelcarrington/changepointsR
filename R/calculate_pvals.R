@@ -43,7 +43,7 @@
 #' @examples
 #' # to do
 #'
-calculate_pvals <- function(y, method="bs", results=NULL, N=100, nus=NULL, threshold=NULL, maxiter=NULL, h=2,
+calculate_pvals <- function(y, results=NULL, method="bs", N=100, nus=NULL, threshold=NULL, maxiter=NULL, h=2,
                               sigma2=1, eps0=0.01, include_original=FALSE, num_pvals=NULL, random_samples=NULL,
                               num_rand_samples=NULL, seeded=FALSE, decay=NULL){
 
@@ -149,13 +149,13 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=100, nus=NULL, thres
         b2 <- b2[!is.na(b2)]
         if ( length( b2 ) >= 1 ){
           if ( r2$results$b[1] == b[jj] ){
-            S <- calculate_S_all_methods(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, first_cp_only=TRUE, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
+            S <- calculate_S(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, first_cp_only=TRUE, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
             ## nuTy should be calculated using the original y!
           } else {
-            S <- calculate_S_all_methods(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
+            S <- calculate_S(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
           }
         } else {
-          S <- calculate_S_all_methods(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
+          S <- calculate_S(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
         }
 
 
@@ -196,7 +196,7 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=100, nus=NULL, thres
 
   }
 
-  return( p_value )
+  return( list(p_value=p_value, P_both=P_both, P_phi_in_S=P_phi_in_S) )
 
 }
 
