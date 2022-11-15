@@ -31,8 +31,6 @@ calculate_interval(
 \item{n.cp}{max. number of changepoints to detect of binary segmentation algorithm}
 
 \item{threshold}{minimum changepoint threshold used in binary segmentation algorithm}
-
-\item{cs}{?}
 }
 \value{
 A 2-dimensional vector
