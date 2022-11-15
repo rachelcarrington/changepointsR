@@ -18,7 +18,7 @@ find_cps(
 \arguments{
 \item{y}{Numeric vector of data.}
 
-\item{method}{Character string; \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
+\item{method}{Character string: \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
 \code{"not"} for narrowest over threshold.}
 
 \item{threshold}{Numeric; changepoint detection threshold for CUSUM statistic.}
