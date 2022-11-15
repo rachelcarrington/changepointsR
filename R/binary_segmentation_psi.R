@@ -122,11 +122,11 @@ binary_segmentation_psi <- function( y, results=NULL, nus=NULL, threshold=NULL, 
     nuTy <- as.numeric(t(nu) %*% y)
 
     if ( jj == 1 ){
-      S <- calculate_S_all_methods(y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
-                                    nuTy=nuTy, first_cp_only=first_cp_only)
+      S <- calculate_S(y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
+                        nuTy=nuTy, first_cp_only=first_cp_only)
     } else {
-      S <- calculate_S_all_methods(y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
-                                    nuTy=nuTy)
+      S <- calculate_S(y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method="bs",
+                        nuTy=nuTy)
     }
 
 
