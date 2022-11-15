@@ -16,7 +16,8 @@ changepoints_psi(
   first_cp_only = FALSE,
   method = "bs",
   num_rand_ints = NULL,
-  rand_ints = NULL
+  rand_ints = NULL,
+  return_S = TRUE
 )
 }
 \arguments{
@@ -33,7 +34,7 @@ changepoints_psi(
 
 \item{eps0}{...}
 
-\item{sigma2}{Variance of y.}
+\item{sigma2}{Variance of \code{y}.}
 
 \item{h}{Window size.}
 
@@ -44,7 +45,9 @@ or \code{"not"} (narrowest over threshold).}
 
 \item{num_rand_ints}{Number of random intervals for changepoint algorithm (not for \code{method = "bs"}).}
 
-\item{rand_ints}{Rand}
+\item{rand_ints}{Random intervals for changepoint algorithm.}
+
+\item{return_S}{Logical. Whether to return the set \code{S}.}
 }
 \value{
 ...
@@ -55,7 +58,7 @@ over threshold) to a vector of data, where the model is piecewise constant mean.
 first changepoint using method of Jewell et al.
 }
 \details{
-Either results or threshold and maxiter should be given.
+Either \code{results} or \code{threshold} and \code{maxiter} should be given.
 }
 \examples{
 # to do
