@@ -38,15 +38,6 @@ Find values of phi which satisfy the required inequalities so that the binary se
 Option to only consider part of (b, d), e.g. if we just want b1 & d1 to be specified, & don't care about
 later values
 }
-\details{
-(possibly outdated)
-At present this ignores the threshold and just matches the number of CPs found (currently updating)
-If threshold is also supplied, this will also be used.
-Otherwise, if threshold is supplied (but not n.cp), the interval returned will be that for which the complete
-b and d match those given, when BS is given this threshold. If threshold is not supplied, it will be assumed
-that BS is run with a fixed number of iterations. If both n.cp and threshold are supplied, it will be assumed that
-n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
-}
 \examples{
 # to do
 
