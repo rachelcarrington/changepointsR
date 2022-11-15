@@ -7,15 +7,13 @@
 y_phi(y, nu, phi, nu2 = NULL, nuTy = NULL)
 }
 \arguments{
-\item{y}{Numeric data vector}
+\item{y}{Numeric data vector.}
 
-\item{nu}{Numeric data vector of same length as y}
+\item{nu}{Numeric vector of same length as \code{y}.}
 
-\item{phi}{Scalar}
+\item{phi}{Numeric.}
 
-\item{nu2}{Scalar; squared 2-norm of nu}
-
-\item{nuTy}{Scalar; value of nu^T y}
+\item{nu2}{Squared 2-norm of \code{nu}.}
 }
 \value{
 Numeric vector
@@ -24,8 +22,8 @@ Numeric vector
 ...
 }
 \examples{
-y <- rnorm(20) + c(rep(1,10), rep(-1,10))
-nu <- c(rep(0,5), rep(1/5,5), rep(-1/5,5), rep(0,5))
+y <- rnorm(20) + c(rep(1, 10), rep(-1, 10))
+nu <- c(rep(0, 5), rep(1/5, 5), rep(-1/5, 5), rep(0, 5))
 phi <- 2
 y_phi(y, nu, phi)
 
