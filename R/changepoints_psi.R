@@ -12,16 +12,17 @@
 #' @param threshold Changepoint detection threshold.
 #' @param maxiter Integer. Maximum number of changepoints for algorithm to detect.
 #' @param eps0 ...
-#' @param sigma2 Variance of y.
+#' @param sigma2 Variance of \code{y}.
 #' @param h Window size.
 #' @param first_cp_only ...
 #' @param method Character string; one of \code{"bs"} (binary segmentation), \code{"wbs"} (wild binary segmentation),
 #' or \code{"not"} (narrowest over threshold).
 #' @param num_rand_ints Number of random intervals for changepoint algorithm (not for \code{method = "bs"}).
-#' @param rand_ints Rand
+#' @param rand_ints Random intervals for changepoint algorithm.
+#' @param return_S Logical. Whether to return the set \code{S}.
 #'
 #' @details
-#' Either results or threshold and maxiter should be given.
+#' Either \code{results} or \code{threshold} and \code{maxiter} should be given.
 #'
 #'
 #' @return ...
@@ -32,8 +33,8 @@
 #' @examples
 #' # to do
 #'
-changepoints_psi <- function( y, results=NULL, nu=NULL, threshold=NULL, maxiter=NULL, eps0=0.01, sigma2=NULL,
-                                     h=NULL, first_cp_only=FALSE, method="bs", num_rand_ints=NULL, rand_ints=NULL ){
+changepoints_psi <- function( y, results=NULL, nu=NULL, threshold=NULL, maxiter=NULL, eps0=0.01, sigma2=NULL, h=NULL, 
+                              first_cp_only=FALSE, method="bs", num_rand_ints=NULL, rand_ints=NULL, return_S=TRUE ){
 
   ### Calculate p-values for binary segmentation, wild/seeded binary segmentation, or narrowest over threshold
 
@@ -118,8 +119,8 @@ changepoints_psi <- function( y, results=NULL, nu=NULL, threshold=NULL, maxiter=
 
   ### Calculate p-value
 
-  S <- calculate_S_all_methods( y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method=method,
-                                nuTy=nuTy, first_cp_only=first_cp_only, rand_ints=rand_ints, seeded=seeded, decay=decay )
+  S <- calculate_S( y, results=results, nu=nu, threshold=threshold, maxiter=maxiter, method=method,
+                    nuTy=nuTy, first_cp_only=first_cp_only, rand_ints=rand_ints, seeded=seeded, decay=decay )
 
   ### Take intervals which are for the correct values of b
   if ( first_cp_only ){
@@ -166,5 +167,10 @@ changepoints_psi <- function( y, results=NULL, nu=NULL, threshold=NULL, maxiter=
   ncp_max <- (ncol(S) - 2)/2
   colnames(S) <- colnames(S2) <- c("lower_lim", "upper_lim", paste0("b", 1:ncp_max), paste0("d", 1:ncp_max))
 
-  return( list(b=b, d=d, nuTy=nuTy, p_value=p_value, S=S, S2=S2) )
+  if ( return_S ){
+    return( list(p_value=p_value, changepoints=b, psi_obs=nuTy, S=S2) )
+  } else {
+    return( list(p_value=p_value, changepoints=b, psi_obs=nuTy) )
+  }
+
 }
