@@ -1,0 +1,37 @@
+---
+title: "example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(changepointsR)
+```
+
+
+First, simulate from a model and apply binary segmentation.
+
+```{r bs}
+set.seed(100)
+y <- rnorm(200) + c(rep(1,40), rep(-1,40), rep(1,40), rep(-1,40), rep(1,40))
+plot(y)
+abline(v=c(40, 80, 120, 160, 200), col="grey")
+results <- binary_segmentation(y)
+print(results)
+```
+
+Calculate p-values.
+
+```{r p-values, warning=FALSE}
+calculate_pvals(y, results, method="bs", N=10, h=10, sigma2=1, include_original=TRUE)
+```
