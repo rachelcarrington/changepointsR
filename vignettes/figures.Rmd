@@ -1,0 +1,57 @@
+---
+title: "figures"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{figures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(changepointsR)
+library(ggplot2)
+```
+
+```{r plots}
+set.seed(100)
+h <- 10
+pvals <- matrix(NA, nrow=1000, ncol=5)
+iter <- 1
+while( iter <= 1000 ){
+  y <- rnorm(1000)
+  results <- binary_segmentation(y, threshold=3.5)
+  if ( length(results$changepoints) >=1 ){
+    if ( results$changepoints[1] >= 10 & results$changepoints[1] <= 990 ){
+      x <- calculate_pvals(y, results, N=50, h=h, sigma2=1, num_pvals=1)
+      pvals[iter,1] <- x$P_both[1] / x$P_phi_in_S[1]
+      pvals[iter,2] <- sum(x$P_both[1:5]) / sum(x$P_phi_in_S[1:5])
+      pvals[iter,3] <- sum(x$P_both[1:10]) / sum(x$P_phi_in_S[1:10])
+      pvals[iter,4] <- sum(x$P_both[1:20]) / sum(x$P_phi_in_S[1:20])
+      pvals[iter,5] <- sum(x$P_both[1:50]) / sum(x$P_phi_in_S[1:50])
+      iter <- iter + 1
+    }
+  }
+}
+pvals[pvals>1] <- 1 ## some p-values are slightly above 1 because of floating point errors
+pvals[is.na(pvals)] <- 0.5 ## set NaNs to 0.5
+colnames(pvals) <- paste0("N", c(1, 5, 10, 20, 50))
+
+## Sort p-values
+pvals_sorted <- matrix(NA, nrow=1000, ncol=5)
+for ( i in 1:5 ){
+  pvals_sorted[,i] <- sort(pvals[,i])
+}
+
+## Plot p-values against theoretical quantities from U(0,1)
+dat <- data.frame(x=rep(seq(0, 1, length.out=1000), 4), y=as.vector(pvals_sorted[,c(1,2,3,5)]), 
+                  N=rep(as.factor(c(1, 5, 10, 50)), each=1000))
+ggplot(dat) + geom_point(aes(x=x, y=y, colour=N)) + geom_line(aes(x=x, y=y, colour=N)) +
+  geom_abline(intercept=0, slope=1) + labs(x="p-value", y="")
+```
