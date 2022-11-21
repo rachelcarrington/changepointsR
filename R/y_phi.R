@@ -1,14 +1,14 @@
 #' Calculate y'(phi)
 #'
-#' @description ...
+#' @description Calculate \eqn{y'(\phi) = y - (||\nu||_2^2)^{-1} \nu \nu^T y + (||\nu||_2^2)^{-1} \nu \phi}.
 #'
 #' @param y Numeric data vector.
 #' @param nu Numeric vector of same length as \code{y}.
 #' @param phi Numeric.
-#' @param nu2 Squared 2-norm of \code{nu}.
-#' @param nuTy Numeric; value of \code{t(nu)^T %*% y}.
+#' @param nu2 Value of \eqn{||\nu||_2^2}; optional.
+#' @param nuTy Value of \eqn{\nu^T y}; optional.
 #'
-#' @return Numeric vector
+#' @return Numeric vector.
 #' @export
 #'
 #' @examples

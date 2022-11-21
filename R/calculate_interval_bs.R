@@ -9,9 +9,9 @@
 #' @param b Vector of changepoints detected by binary segmentation algorithm.
 #' @param d Directions of changepoints detected by binary segmentation algorithm. Vector whose entries are all equal to \code{1}
 #' or \code{-1}.
-#' @param nu2 Value of the squared 2-norm of \code{nu}.
-#' @param nuTy Value of \code{nu^T %*% y}.
-#' @param threshold Minimum changepoint threshold used in binary segmentation algorithm.
+#' @param nu2 Value of \eqn{||\nu||_2^2}; optional.
+#' @param nuTy Value of \eqn{\nu^T y}; optional.
+#' @param threshold Threshold used in binary segmentation algorithm.
 #' @param n.cp Maximum number of changepoints to detect of binary segmentation algorithm.
 #'
 #' @return A 2-dimensional vector

@@ -13,13 +13,15 @@ y_phi(y, nu, phi, nu2 = NULL, nuTy = NULL)
 
 \item{phi}{Numeric.}
 
-\item{nu2}{Squared 2-norm of \code{nu}.}
+\item{nu2}{Value of \eqn{||\nu||_2^2}; optional.}
+
+\item{nuTy}{Value of \eqn{\nu^T y}; optional.}
 }
 \value{
-Numeric vector
+Numeric vector.
 }
 \description{
-...
+Calculate \eqn{y'(\phi) = y - (||\nu||_2^2)^{-1} \nu \nu^T y + (||\nu||_2^2)^{-1} \nu \phi}.
 }
 \examples{
 y <- rnorm(20) + c(rep(1, 10), rep(-1, 10))

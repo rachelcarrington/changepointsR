@@ -25,9 +25,11 @@ calculate_interval_bs(
 \item{d}{Directions of changepoints detected by binary segmentation algorithm. Vector whose entries are all equal to \code{1}
 or \code{-1}.}
 
-\item{nu2}{Value of the squared 2-norm of \code{nu}.}
+\item{nu2}{Value of \eqn{||\nu||_2^2}; optional.}
 
-\item{threshold}{Minimum changepoint threshold used in binary segmentation algorithm.}
+\item{nuTy}{Value of \eqn{\nu^T y}; optional.}
+
+\item{threshold}{Threshold used in binary segmentation algorithm.}
 
 \item{n.cp}{Maximum number of changepoints to detect of binary segmentation algorithm.}
 }
