@@ -1,30 +1,28 @@
 #' Calculate interval for narrowest over threshold
 #'
-#' @description Find values of phi which satisfy the required inequalities so that the narrowest over threshold algorithm 
-#' returns \code{(b, d)};
-#' Option to only consider part of \code{(b, d)}, e.g. if we just want b1 & d1 to be specified, & don't care about
-#' later values
+#' @description Find values of phi which satisfy the required inequalities so that applying narrowest over threshold to \eqn{y'(\phi)}
+#' returns \code{(b, d)}.
 #'
-#' @details (possibly outdated)
-#' At present this ignores the threshold and just matches the number of CPs found (currently updating)
-#' If threshold is also supplied, this will also be used.
-#' Otherwise, if threshold is supplied (but not n.cp), the interval returned will be that for which the complete
-#' b and d match those given, when BS is given this threshold. If threshold is not supplied, it will be assumed
-#' that BS is run with a fixed number of iterations. If both n.cp and threshold are supplied, it will be assumed that
-#' n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
+#' @details Used inside \code{calculate_S} if \code{method = "not"}.
 #'
-#' @param y Numeric vector of data
-#' @param nu ...
-#' @param results Output of \code{narrowest_over_threshold}
-#' @param nu2 Value of \eqn{||\nu||_2^2}
-#' @param nuTy Value of \eqn{\nu^T y}
+#' @param y Numeric vector of data.
+#' @param nu Numeric vector.
+#' @param results Output of \code{narrowest_over_threshold}.
+#' @param nu2 Value of \eqn{||\nu||_2^2}.
+#' @param nuTy Value of \eqn{\nu^T y}.
 #'
-#' @return A 2-dimensional vector
+#' @return A 2-dimensional vector.
 #'
 #' @export
 #'
 #' @examples
-#' x <- 0
+#' set.seed(100)
+#' y <- rnorm(100) + c(rep(1,50), rep(-1,50))
+#' results <- narrowest_over_threshold(y, lambda=4, N=50)
+#' b <- results$results$b
+#' h <- 10
+#' nu <- c(rep(0, b[1]-h), rep(1/h, h), rep(-1/h, h), rep(0, length(y)-b[1]-h))
+#' calculate_interval_not(y, nu, results=results)
 #'
 calculate_interval_not <- function(y, nu, results, nu2=NULL, nuTy=NULL){
   

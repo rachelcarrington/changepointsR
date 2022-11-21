@@ -7,18 +7,30 @@
 #' @param lambda Threshold parameter
 #' @param N Number of samples of psi to take
 #' @param h Window size
-#' @param sigma2 Variance of y
+#' @param sigma2 Variance of \code{y}
 #' @param sig Tuning parameter
 #' @param include_original Logical; whether to include observed value as psi in place as one of the random samples;
 #' defaults to \code{TRUE}
 #' @param num_pvals Maximum number of p-values to calculate
 #'
-#' @return ...
+#' @return A list:
+#' \itemize{
+#' \item \code{b} Vector of changepoints
+#' \item \code{p_value} Vector of p-values
+#' \item \code{p_value_orig} Vector of p-values obtained using fixed \eqn{\psi = \psi_{obs}}
+#' \item \code{nuTy} Value of \eqn{\nu^T y}
+#' \item \code{P_both} Matrix containing values of \eqn{Pr(|\phi| > |\phi_{obs}| & \phi \in S)}
+#' \item \code{P_phi_in_S} Matrix containing values of \eqn{Pr(\phi \in S)}
+#' \item \code{P_both_orig} Vector containing values of \eqn{Pr(|\phi| > |\phi_{obs}| & \phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
+#' \item \code{P_phi_in_S_orig} Vector containing values of \eqn{Pr(\phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
+#' }
 #'
 #' @export
 #'
 #' @examples
-#' ...
+#' set.seed(100)
+#' y <- rnorm(100) + c(rep(1,40), rep(-1,20), rep(1,40))
+#' l0_segmentation_psi(y, 4, 10, 10)
 #'
 l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_original=TRUE, num_pvals=NULL){
 
@@ -76,8 +88,6 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
   ### New p-values
 
   if ( length(b) >= 1 & N2 >= 1 ){
-
-    print(paste0("Number of changepoints: ", length(b)))
 
     alpha <- rep(1, 2*h)
     alpha2 <- 2*h
@@ -142,10 +152,6 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
 
           }
 
-          print(iter)
-
-
-
         }
 
         ### Calculate p-value estimates
@@ -166,7 +172,6 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
     print("No changepoints detected.")
 
   }
-
 
   return(list(b=b, p_value=p_val, p_value_orig=pvals_orig, nuTy=nuTy, P_both=P_both, P_phi_in_S=P_phi_in_S, P_both_orig=P_both_orig,
                 P_phi_in_S_orig=P_phi_in_S_orig))

@@ -10,10 +10,10 @@ calculate_S(
   results = NULL,
   b = NULL,
   d = NULL,
-  nu2 = NULL,
-  nuTy = NULL,
   threshold = NULL,
   maxiter = NULL,
+  nu2 = NULL,
+  nuTy = NULL,
   eps0 = 0.01,
   first_cp_only = FALSE,
   method = "bs",
@@ -25,31 +25,32 @@ calculate_S(
 \arguments{
 \item{y}{Numeric vector of data.}
 
-\item{nu}{...}
+\item{nu}{Numeric vector.}
 
-\item{results}{Output of changepoint algorithm.}
+\item{results}{Output of changepoint algorithm (either \code{binary_segmentation}, \code{wild_binary_segmentation}, or
+\code{narrowest_over_threshold}.}
 
-\item{b}{Vector of changepoints; ignored if results specified.}
+\item{b}{Vector of changepoints; ignored if \code{results} specified.}
 
-\item{d}{Vector containing directions of changepoints (+1 or -1); ignored if results specified.}
+\item{d}{Vector containing directions of changepoints (+1 or -1); ignored if \code{results} specified.}
 
-\item{nu2}{Scalar; value of ||nu||_2^2; optional.}
+\item{threshold}{Threshold for detecting changepoints; ignored if \code{results} specified.}
 
-\item{nuTy}{Value of nu^T y.}
+\item{maxiter}{Maximum number of changepoints to detect; ignored if \code{results} specified.}
 
-\item{threshold}{Threshold for detecting changepoints; ignored if results specified.}
+\item{nu2}{Value of \eqn{||\nu||_2^2}; optional.}
 
-\item{maxiter}{Maximum number of changepoints to detect; ignored if results specified.}
+\item{nuTy}{Value of \eqn{nu^T y}; optional.}
 
-\item{eps0}{...}
+\item{eps0}{Hyperparameter.}
 
 \item{first_cp_only}{Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model;
-if \code{FALSE}, condition on all changepoints. Defaults to \code{TRUE} if \code{h} is supplied, and \code{FALSE} otherwise.}
+if \code{FALSE}, condition on all changepoints. Defaults to \code{FALSE}.}
 
-\item{method}{One of \code{"bs"} (binary segmentation), \code{"wbs"} (wild binary segmentation), or \code{"not"} (narrowest
+\item{method}{Character. One of \code{"bs"} (binary segmentation), \code{"wbs"} (wild binary segmentation), or \code{"not"} (narrowest
 over threshold). Defaults to \code{"bs"}.}
 
-\item{rand_ints}{Matrix containing random intervals for changepoint algorithm. Ignored if results specified
+\item{rand_ints}{Matrix containing random intervals for changepoint algorithm. Ignored if \code{results} specified
 or \code{method = "bs"}.}
 
 \item{seeded}{Logical. For \code{method = "wbs"} only, whether to use seeded binary segmentation.}
@@ -62,11 +63,16 @@ or \code{method = "bs"}.}
 A dataframe containing intervals with the changepoints obtained when \eqn{\phi} is in each interval.
 }
 \description{
-A function for calculating the set of interest S.
-}
-\details{
-...
+A function for calculating the set of interest S, when the changepoint algorithm used is one of binary segmentation,
+wild binary segmentation, or narrowest over threshold.
 }
 \examples{
-# ...
+set.seed(100)
+y <- rnorm(100) + c(rep(1,50), rep(-1,50))
+results <- binary_segmentation(y)
+print(results$changepoints)
+h <- 10
+nu <- c(rep(0, results$changepoints[1] - h), rep(1/h, h), rep(-1/h, h), rep(0, length(y) - results$changepoints[1] - h))
+calculate_S(y, nu, results, method="bs", first_cp_only=TRUE)
+
 }

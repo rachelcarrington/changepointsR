@@ -20,49 +20,50 @@ calculate_interval_wbs(
 )
 }
 \arguments{
-\item{y}{vector of data (ignored if cs & nuTy are supplied)}
+\item{y}{Numeric vector of data.}
 
-\item{nu}{...}
+\item{nu}{Numeric vector.}
 
 \item{results}{Output of \code{wild_binary_segmentation}.}
 
-\item{b}{Numeric vector of changepoints.}
+\item{b}{Numeric vector of changepoints. Ignored if \code{results} specified.}
 
-\item{d}{Numeric vector containing directions of changepoints; all entries should be either +1 or -1.}
+\item{d}{Numeric vector containing directions of changepoints; all entries should be either +1 or -1. Ignored if \code{results} specified.}
 
-\item{s}{...}
+\item{s}{Numeric vector containing starting indices of changepoint-containing intervals. Ignored if \code{results} specified.}
 
-\item{e}{...}
+\item{e}{Numeric vector containing ending indices of changepoint-containing intervals.  Ignored if \code{results} specified.}
 
-\item{rand_ints}{...}
+\item{rand_ints}{Matrix containing starting and ending points of random intervals used for wild binary segmentation algorithm.
+Ignored if \code{results} specified.}
 
-\item{nu2}{value of ||nu||_2^2}
+\item{nu2}{Value of \eqn{||\nu||_2^2}.}
 
-\item{nuTy}{value of nu^T y}
+\item{nuTy}{Value of \eqn{\nu^T y}.}
 
-\item{threshold}{Changepoint threshold used in wild binary segmentation algorithm.}
+\item{threshold}{Changepoint threshold used in wild binary segmentation algorithm. Ignored if \code{results} specified.}
 
-\item{n.cp}{Integer: maximum number of changepoints to detect.}
+\item{n.cp}{Maximum number of changepoints to detect.}
 }
 \value{
-A 2-dimensional vector
+A 2-dimensional vector.
 }
 \description{
-Find values of phi which satisfy the required inequalities so that the wild binary segmentation algorithm returns
-\code{(b, d)}.
-Option to only consider part of \code{(b, d)}, e.g. if we just want b1 & d1 to be specified, & don't care about
-later values
+Find values of phi which satisfy the required inequalities so that applying wild binary segmentation to \eqn{y'(\phi)}
+returns \code{(b, d)}.
+Option to only consider part of \code{(b, d)}, e.g. if we want \code{b[1]} to be in the set of detected changepoints but are not concerned
+about other changepoints.
 }
 \details{
-(possibly outdated)
-At present this ignores the threshold and just matches the number of CPs found (currently updating)
-If threshold is also supplied, this will also be used.
-Otherwise, if threshold is supplied (but not n.cp), the interval returned will be that for which the complete
-b and d match those given, when BS is given this threshold. If threshold is not supplied, it will be assumed
-that BS is run with a fixed number of iterations. If both n.cp and threshold are supplied, it will be assumed that
-n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
+Used inside \code{calculate_S} if \code{method = "wbs"}.
 }
 \examples{
-x <- 0
+set.seed(100)
+y <- rnorm(100) + c(rep(1,50), rep(-1,50))
+results <- wild_binary_segmentation(y, threshold=4, num_rand_samples=50)
+b <- results$results$b
+h <- 10
+nu <- c(rep(0, b[1]-h), rep(1/h, h), rep(-1/h, h), rep(0, length(y)-b[1]-h))
+calculate_interval_wbs(y, nu, results=results)
 
 }

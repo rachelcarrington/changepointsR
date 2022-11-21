@@ -8,7 +8,7 @@
 #' @details Used inside \code{calculate_S} if \code{method = "bs"}.
 #'
 #' @param y Numeric vector of data.
-#' @param nu ...
+#' @param nu Numeric vector.
 #' @param b Vector of changepoints detected by binary segmentation algorithm.
 #' @param d Directions of changepoints detected by binary segmentation algorithm. Vector whose entries are all equal to \code{1}
 #' or \code{-1}.
@@ -17,7 +17,7 @@
 #' @param threshold Threshold used in binary segmentation algorithm.
 #' @param n.cp Maximum number of changepoints to detect of binary segmentation algorithm.
 #'
-#' @return A 2-dimensional vector
+#' @return A 2-dimensional vector.
 #'
 #' @export
 #'

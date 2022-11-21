@@ -18,7 +18,7 @@ calculate_interval_bs(
 \arguments{
 \item{y}{Numeric vector of data.}
 
-\item{nu}{...}
+\item{nu}{Numeric vector.}
 
 \item{b}{Vector of changepoints detected by binary segmentation algorithm.}
 
@@ -34,7 +34,7 @@ or \code{-1}.}
 \item{n.cp}{Maximum number of changepoints to detect of binary segmentation algorithm.}
 }
 \value{
-A 2-dimensional vector
+A 2-dimensional vector.
 }
 \description{
 Find values of phi which satisfy the required inequalities so that applying binary segmentation to \eqn{y'(\phi)}

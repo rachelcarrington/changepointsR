@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_random_intervals.R
 \name{generate_random_intervals}
 \alias{generate_random_intervals}
-\title{Generate Random Intervals}
+\title{Generate random intervals}
 \usage{
 generate_random_intervals(n, N, min_width = 2)
 }
@@ -17,11 +17,11 @@ generate_random_intervals(n, N, min_width = 2)
 An N x 2 matrix of integers
 }
 \description{
-Generate random intervals within the range (1,n). For use in wild binary segmentation, etc.
+Generate random intervals within the range (1,n). For use in wild binary segmentation and narrowest over threshold algorithms.
 }
 \details{
-If N is greater than the total number of possible unique intervals contained in \link{1,n} with width at least
-min_width, then the output will be a list of all possible intervals.
+If the number of intervals supplied is greater than the total number of possible unique intervals contained in \link{1,n} with width at least
+\code{min_width}, then the output will be a list of all possible intervals contained in \link{1,n}.
 }
 \examples{
 generate_random_intervals(100, 10, 2)

@@ -1,22 +1,27 @@
 #' Calculate interval
 #'
-#' @description ...
+#' @description Wrapper function for \code{calculate_interval_bs}, \code{calculate_interval_wbs}, and \code{calculate_interval_not}.
 #'
 #' @param y Numeric vector of data
 #' @param method Character string; \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
 #' \code{"not"} for narrowest over threshold.
-#' @param results ...
-#' @param nu ...
-#' @param nu2 value of ||nu||_2^2
-#' @param nuTy value of nu^T y
-#' @param threshold minimum changepoint threshold used in binary segmentation algorithm
-#' @param n.cp max. number of changepoints to detect of binary segmentation algorithm
+#' @param results Output of changepoint algorithm (\code{binary_segmentation}, \code{wild_binary_segmentation}, or \code{narrowest_over_threshold}).
+#' @param nu Numeric vector.
+#' @param nu2 Value of \eqn{||\nu||_2^2}.
+#' @param nuTy Value of \eqn{\nu^T y}.
+#' @param n.cp Maximum number of changepoints to detect.
 #'
-#' @return A 2-dimensional vector
+#' @return A 2-dimensional vector.
 #' @export
 #'
 #' @examples
-#' x <- 0
+#' set.seed(100)
+#' y <- rnorm(100) + c(rep(1,50), rep(-1,50))
+#' results <- binary_segmentation(y, threshold=4)
+#' b <- results$results$b[ results$results$cp==1 ]
+#' h <- 10
+#' nu <- c(rep(0, b[1]-h), rep(1/h, h), rep(-1/h, h), rep(0, length(y)-b[1]-h))
+#' calculate_interval(y, "bs", results, nu)
 #'
 calculate_interval <- function(y, method, results, nu, nu2=NULL, nuTy=NULL, n.cp=NULL ){
 

@@ -1,10 +1,10 @@
-#' Generate Random Intervals
+#' Generate random intervals
 #'
-#' @description Generate random intervals within the range (1,n). For use in wild binary segmentation, etc.
+#' @description Generate random intervals within the range (1,n). For use in wild binary segmentation and narrowest over threshold algorithms.
 #'
 #' @details
-#' If N is greater than the total number of possible unique intervals contained in [1,n] with width at least
-#' min_width, then the output will be a list of all possible intervals.
+#' If the number of intervals supplied is greater than the total number of possible unique intervals contained in [1,n] with width at least
+#' \code{min_width}, then the output will be a list of all possible intervals contained in [1,n].
 #'
 #' @param n Integer; upper limit
 #' @param N Integer; number of intervals to generate

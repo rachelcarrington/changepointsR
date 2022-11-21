@@ -36,10 +36,17 @@ Ignored if \code{method = "bs"}.}
 \item{decay}{Decay parameter for seeded binary segmentation; only used if \code{method = "wbs"} and \code{seeded = TRUE}.}
 }
 \value{
-...
+A list:
+\itemize{
+\item \code{results} Dataframe containing results
+\item \code{changepoints} Vector of changepoints detected
+\item \code{rand_ints} (Not if \code{method = "bs"}) Matrix containing random intervals used
+\item \code{threshold} Value of \code{threshold}
+\item \code{maxiter} Value of \code{maxiter}
+}
 }
 \description{
-Implement binary segmentation, wild binary segmentation, and narrowest over threshold for change in mean model.
+Wrapper function for \code{binary_segmentation}, \code{wild_binary_segmentation}, and \code{narrowest_over_threshold}.
 }
 \examples{
 set.seed(100)

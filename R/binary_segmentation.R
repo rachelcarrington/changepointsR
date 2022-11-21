@@ -19,6 +19,7 @@
 #' \item \code{threshold} Value of \code{threshold}
 #' \item \code{maxiter} Value of \code{maxiter}
 #' }
+#'
 #' @export
 #'
 #' @examples
