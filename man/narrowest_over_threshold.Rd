@@ -9,16 +9,21 @@ narrowest_over_threshold(y, lambda, rand_ints = NULL, N = 1000, max_cps = NULL)
 \arguments{
 \item{y}{A numeric vector of data.}
 
-\item{lambda}{Threshold; a scalar.}
+\item{lambda}{Threshold for CUSUM statistic; a scalar.}
 
-\item{rand_ints}{Matrix containing random intervals; optional.}
+\item{rand_ints}{N x 2 matrix containing random intervals; optional.}
 
-\item{N}{Number of random intervals; defaults to 1000.}
+\item{N}{Number of random intervals; defaults to 1000. Ignored if \code{rand_ints} is specified.}
 
-\item{max_cps}{Maximum number of changepoints to return.}
+\item{max_cps}{Maximum number of changepoints to return; defaults to \code{length(y) - 1} if \code{NULL}.}
 }
 \value{
-...
+List.
+\code{results}
+\code{changepoints}
+\code{rand_ints}
+\code{threshold}
+\code{maxiter}
 }
 \description{
 Apply the narrowest over threshold changepoint algorithm to a vector of data. The model is the piecewise constant mean model.
