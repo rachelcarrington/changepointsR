@@ -6,8 +6,8 @@
 \usage{
 calculate_pvals(
   y,
-  method = "bs",
   results = NULL,
+  method = "bs",
   N = 100,
   nus = NULL,
   threshold = NULL,
@@ -20,17 +20,18 @@ calculate_pvals(
   random_samples = NULL,
   num_rand_samples = NULL,
   seeded = FALSE,
-  decay = NULL
+  decay = NULL,
+  return_probs = FALSE
 )
 }
 \arguments{
 \item{y}{Numeric vector of data.}
 
-\item{method}{Method used to generate changepoints. Options: \code{"bs"} for binary segmentation,
-\code{"wbs"} for wild or seeded binary segmentation, \code{"not"} for narrowest over threshold.}
-
 \item{results}{Output of changepoint algorithm (either \code{binary_segmentation}, \code{wild_binary_segmentation}, or
 \code{narrowest_over_threshold}.}
+
+\item{method}{Method used to generate changepoints. Options: \code{"bs"} for binary segmentation,
+\code{"wbs"} for wild or seeded binary segmentation, \code{"not"} for narrowest over threshold.}
 
 \item{N}{Positive integer. Number of random \eqn{\psi}'s to generate.}
 
@@ -49,9 +50,12 @@ changepoint of interest are used to define the window.}
 \item{eps0}{Hyperparameter for calculating S.}
 
 \item{include_original}{Logical. Whether to include the \eqn{\psi} value corresponding to the observed data in place of
-one of the ranom samples.}
+one of the random samples.}
 
-\item{num_pvals}{Integer. Number of changepoints to calculate p-values for.}
+\item{num_pvals}{Integer or NA. Maximum number of p-values to calculate; if set to NA, it will default to \code{length(y) - 1}.
+If the number of changepoints detected by the binary segmentation algorithm is less than or equal to \code{num_pvals}, then
+p-values will be calculated for all changepoints. If \code{num_pvals} is less than the number of changepoints detected,
+p-values will only be calculated for the first \code{num_pvals} changepoints, in order of detection.}
 
 \item{random_samples}{Matrix containing random intervals. For wild binary segmentation and narrowest over
 threshold only.}
@@ -63,6 +67,9 @@ Ignored if \code{random_samples} is specified, \code{method = "bs"}, or \code{se
 \code{method = "wbs"}.}
 
 \item{decay}{Decay parameter for seeded binary segmentation. Only used if \code{method = "wbs"} and \code{seeded = TRUE}.}
+
+\item{return_probs}{Logical. If \code{TRUE}, the values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} and \eqn{Pr(\phi \in S)}
+for each \eqn{\psi} will be included in the output.}
 }
 \value{
 A vector of p-values
