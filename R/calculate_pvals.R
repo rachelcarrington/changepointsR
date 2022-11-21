@@ -15,8 +15,11 @@
 #' @param sigma2 Variance of \code{y}.
 #' @param eps0 Hyperparameter for calculating S.
 #' @param include_original Logical. Whether to include the \eqn{\psi} value corresponding to the observed data in place of
-#' one of the ranom samples.
-#' @param num_pvals Integer. Number of changepoints to calculate p-values for.
+#' one of the random samples.
+#' @param num_pvals Integer or NA. Maximum number of p-values to calculate; if set to NA, it will default to \code{length(y) - 1}. 
+#' If the number of changepoints detected by the binary segmentation algorithm is less than or equal to \code{num_pvals}, then 
+#' p-values will be calculated for all changepoints. If \code{num_pvals} is less than the number of changepoints detected, 
+#' p-values will only be calculated for the first \code{num_pvals} changepoints, in order of detection.
 #' @param random_samples Matrix containing random intervals. For wild binary segmentation and narrowest over
 #' threshold only.
 #' @param num_rand_samples Number of random intervals to use for wild binary segmentation or narrowest over threshold. 
@@ -24,6 +27,8 @@
 #' @param seeded Logical. If \code{TRUE}, use seeded binary segmentation rather than wild binary segmentation. Only used if
 #' \code{method = "wbs"}.
 #' @param decay Decay parameter for seeded binary segmentation. Only used if \code{method = "wbs"} and \code{seeded = TRUE}.
+#' @param return_probs Logical. If \code{TRUE}, the values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} and \eqn{Pr(\phi \in S)}
+#' for each \eqn{\psi} will be included in the output.
 #'
 #' @details
 #' Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
@@ -45,7 +50,7 @@
 #'
 calculate_pvals <- function(y, results=NULL, method="bs", N=100, nus=NULL, threshold=NULL, maxiter=NULL, h=2,
                               sigma2=1, eps0=0.01, include_original=FALSE, num_pvals=NULL, random_samples=NULL,
-                              num_rand_samples=NULL, seeded=FALSE, decay=NULL){
+                              num_rand_samples=NULL, seeded=FALSE, decay=NULL, return_probs=FALSE){
 
   #### if num_pvals > 1, nus should be a list
 
@@ -194,6 +199,11 @@ calculate_pvals <- function(y, results=NULL, method="bs", N=100, nus=NULL, thres
 
     }
 
+  }
+
+  if ( !(return_probs) ){
+    P_both <- NA
+    P_phi_in_S <- NA
   }
 
   return( list(p_value=p_value, P_both=P_both, P_phi_in_S=P_phi_in_S) )
