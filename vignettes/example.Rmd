@@ -19,19 +19,32 @@ library(changepointsR)
 ```
 
 
-First, simulate from a model and apply binary segmentation.
+First, generate some data.
 
-```{r bs}
+```{r y}
 set.seed(100)
 y <- rnorm(200) + c(rep(1,40), rep(-1,40), rep(1,40), rep(-1,40), rep(1,40))
 plot(y)
 abline(v=c(40, 80, 120, 160, 200), col="grey")
-results <- binary_segmentation(y)
+```
+
+Implement binary segmentation.
+
+```{r bs}
+results <- binary_segmentation(y, threshold=4)
 print(results)
 ```
 
 Calculate p-values.
 
-```{r p-values, warning=FALSE}
-calculate_pvals(y, results, method="bs", N=10, h=10, sigma2=1, include_original=TRUE)
+```{r p_values, warning=FALSE}
+psi <- calculate_pvals(y, results, method="bs", N=10, h=10, sigma2=1, include_original=TRUE)
+print(psi)
+```
+
+To get values of $P(|\phi| > |\phi_{obs}| \cap \phi \in S_{\psi})$ and $P(\psi \in S_{\psi})$ for each $\psi$, set return_probs=TRUE.
+
+```{r p_values_2, warning=FALSE}
+psi <- calculate_pvals(y, results, method="bs", N=10, h=10, sigma2=1, include_original=TRUE, return_probs=TRUE)
+print(psi)
 ```
