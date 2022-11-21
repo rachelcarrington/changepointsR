@@ -22,7 +22,8 @@ calculate_interval_bs(
 
 \item{b}{Vector of changepoints detected by binary segmentation algorithm.}
 
-\item{d}{Directions of changepoints detected by binary segmentation algorithm. Vector whose entries are all equal to \code{1} or \code{-1}.}
+\item{d}{Directions of changepoints detected by binary segmentation algorithm. Vector whose entries are all equal to \code{1}
+or \code{-1}.}
 
 \item{nu2}{Value of the squared 2-norm of \code{nu}.}
 
