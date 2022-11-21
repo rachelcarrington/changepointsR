@@ -4,12 +4,17 @@
 #' Apply the narrowest over threshold changepoint algorithm to a vector of data. The model is the piecewise constant mean model.
 #'
 #' @param y A numeric vector of data.
-#' @param lambda Threshold; a scalar.
-#' @param rand_ints Matrix containing random intervals; optional.
-#' @param N Number of random intervals; defaults to 1000.
-#' @param max_cps Maximum number of changepoints to return.
+#' @param lambda Threshold for CUSUM statistic; a scalar.
+#' @param rand_ints N x 2 matrix containing random intervals; optional.
+#' @param N Number of random intervals; defaults to 1000. Ignored if \code{rand_ints} is specified.
+#' @param max_cps Maximum number of changepoints to return; defaults to \code{length(y) - 1} if \code{NULL}.
 #'
-#' @return ...
+#' @return List.
+#' \code{results}
+#' \code{changepoints}
+#' \code{rand_ints}
+#' \code{threshold}
+#' \code{maxiter}
 #' @export
 #'
 #' @examples
@@ -20,24 +25,18 @@
 #'
 narrowest_over_threshold <- function( y, lambda, rand_ints=NULL, N=1000, max_cps=NULL ){
 
-  ## y : vector of data
-  ## lambda : threshold
-  ## rand_ints : N x 2 matrix of random intervals
-  ## N : number of random intervals; ignored if rand_ints is not NULL
-  ## max_cps : max. number of changepoints to find, defaults to length(y) - 1
-
   n <- length(y)
   if ( is.null(max_cps) ){
     max_cps <- n - 1
   }
 
   if ( is.null(rand_ints) ){
-    rand_ints <- generate_random_intervals( n, N, 2 )
+    rand_ints <- generate_random_intervals(n, N, 2)
   }
 
   ### Sort intervals by width
   interval_widths <- rand_ints[,2] - rand_ints[,1] + 1
-  rand_ints <- rand_ints[ order( interval_widths ), ]
+  rand_ints <- rand_ints[ order(interval_widths), ]
   interval_widths <- sort(interval_widths)
 
   ### For each interval, calculate CUSUM statistic
