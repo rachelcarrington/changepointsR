@@ -39,7 +39,7 @@ Ignored if \code{method = "bs"}.}
 ...
 }
 \description{
-Implement binary segmentation, wild binary segmentation, narrowest over threshold for change in mean model.
+Implement binary segmentation, wild binary segmentation, and narrowest over threshold for change in mean model.
 }
 \examples{
 set.seed(100)
