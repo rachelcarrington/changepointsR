@@ -3,7 +3,7 @@
 Changepoint algorithms and inference for change in mean model.
 
 Changepoint algorithms:
-binary_segmentation
+binary_segmentation </br>
 wild_binary_segmentation
 narrowest_over_threshold
 
