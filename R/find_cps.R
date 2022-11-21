@@ -1,7 +1,7 @@
 #' Find changepoints.
 #'
 #' @description
-#' Implement binary segmentation, wild binary segmentation, narrowest over threshold for change in mean model.
+#' Implement binary segmentation, wild binary segmentation, and narrowest over threshold for change in mean model.
 #'
 #' @param y Numeric vector of data.
 #' @param method Character string: \code{"bs"} for binary segmentation; \code{"wbs"} for wild binary segmentation;
