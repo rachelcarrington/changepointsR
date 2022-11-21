@@ -14,33 +14,37 @@ binary_segmentation_psi(
   sigma2 = NULL,
   h = NULL,
   first_cp_only = FALSE,
-  num_pvals = NULL
+  num_pvals = NULL,
+  return_probs = FALSE
 )
 }
 \arguments{
 \item{y}{Numeric vector of data.}
 
-\item{results}{Output of binary_segmentation function; can be NULL.}
+\item{results}{Output of \code{binary_segmentation} function; can be \code{NULL}.}
 
 \item{nus}{List of nu's for each detected changepoint. See details.}
 
-\item{threshold}{Numeric; minimum threshold for CUSUM statistic for changepoint detection. Ignored if results specified.}
+\item{threshold}{Numeric; minimum threshold for CUSUM statistic for changepoint detection. Ignored if \code{results} is supplied.}
 
 \item{maxiter}{Number of changepoints to find. Ignored if results specified; otherwise defaults to \code{length(y) - 1}.}
 
-\item{eps0}{Hyperparameter for calculating S. (Details.)}
+\item{eps0}{Hyperparameter for calculating S. Defaults to 0.01.}
 
-\item{sigma2}{Variance of \code{y}. If unknown, it can be estimated within the function.}
+\item{sigma2}{Variance of \code{y}. If \code{NA}, it is estimated within the function.}
 
 \item{h}{Window size. See details.}
 
 \item{first_cp_only}{Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model;
 if \code{FALSE}, condition on all changepoints. Defaults to \code{TRUE} if \code{h} is supplied, and \code{FALSE} otherwise.}
 
-\item{num_pvals}{Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}. If the number of changepoints
-detected by the binary segmentation algorithm is less than or equal to \code{num_pvals}, then p-values will be calculated for all
-changepoints. If \code{num_pvals} is less than the number of changepoints detected, p-values will only be calculated for the first
-\code{num_pvals} changepoints, in order of detection.}
+\item{num_pvals}{Integer or NA. Maximum number of p-values to calculate; if set to NA, it will default to \code{length(y) - 1}.
+If the number of changepoints detected by the binary segmentation algorithm is less than or equal to \code{num_pvals}, then
+p-values will be calculated for all changepoints. If \code{num_pvals} is less than the number of changepoints detected,
+p-values will only be calculated for the first \code{num_pvals} changepoints, in order of detection.}
+
+\item{return_probs}{Logical. If \code{TRUE}, the values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} and \eqn{Pr(\phi \in S)}
+for each \eqn{\psi} will be included in the output.}
 }
 \value{
 A list containing:
