@@ -19,19 +19,24 @@ library(changepointsR)
 library(ggplot2)
 ```
 
-Figure 2(a): simulating under $H_0$ not including original. Here we have used 100 simulations so that the code is quicker to run; to reproduce the plot in the paper change num_iter to 1000. To reproduce Figure 2(b) set h = 20.
+The code below is for Figure 2(a), except that the number of simulations is set to 100 rather than 1000, to speed up the run time. We simulate under $H_0$, apply binary segmentation, and implement our post-selection inference method for different values of $N$. All $\boldsymbol{\psi}$'s are chosen randomly.
+
+To reproduce the exact figure from the paper, change num_iter to 1000. To get Figure 2(b), set h = 20.
 
 ```{r plots}
 set.seed(100)
+
 h <- 10
-n <- 1000
-num_iter <- 100
+n <- 1000 ## size of dataset
+num_iter <- 100 ## number of simulations
+
 pvals <- matrix(NA, nrow=num_iter, ncol=5)
+
 iter <- 1
 while( iter <= num_iter ){
   y <- rnorm(n)
   results <- binary_segmentation(y, threshold=3.5)
-  if ( length(results$changepoints) >= 1 ){
+  if ( length(results$changepoints) >= 1 ){ ## only keep simulations for which the changepoint algorithm detects at least one changepoint
     if ( results$changepoints[1] >= h & results$changepoints[1] <= (n-h) ){
       x <- calculate_pvals(y, results, N=50, h=h, sigma2=1, num_pvals=1)
       pvals[iter,1] <- x$P_both[1] / x$P_phi_in_S[1]
@@ -44,18 +49,18 @@ while( iter <= num_iter ){
   }
 }
 pvals[pvals>1] <- 1 ## some p-values are slightly above 1 because of floating point errors
-pvals[is.na(pvals)] <- 0.5 ## set NaNs to 0.5
+pvals <- pvals[rowSums(is.na(pvals))==0,]
 colnames(pvals) <- paste0("N", c(1, 5, 10, 20, 50))
 
 ## Sort p-values
-pvals_sorted <- matrix(NA, nrow=num_iter, ncol=5)
+pvals_sorted <- matrix(NA, nrow=nrow(pvals), ncol=ncol(pvals))
 for ( i in 1:5 ){
   pvals_sorted[,i] <- sort(pvals[,i])
 }
 
 ## Plot p-values against theoretical quantities from U(0,1)
-dat <- data.frame(x=rep(seq(0, 1, length.out=num_iter), 4), y=as.vector(pvals_sorted[,c(1,2,3,5)]), 
-                  N=rep(as.factor(c(1, 5, 10, 50)), each=num_iter))
+dat <- data.frame(x=rep(seq(0, 1, length.out=nrow(pvals_sorted)), 4), y=as.vector(pvals_sorted[,c(1,2,3,5)]), 
+                  N=rep(as.factor(c(1, 5, 10, 50)), each=nrow(pvals_sorted)))
 ggplot(dat) + geom_point(aes(x=x, y=y, colour=N)) + geom_line(aes(x=x, y=y, colour=N)) +
   geom_abline(intercept=0, slope=1) + labs(x="p-value", y="")
 ```
@@ -85,7 +90,7 @@ while( iter <= num_iter ){
   }
 }
 pvals[pvals>1] <- 1 ## some p-values are slightly above 1 because of floating point errors
-pvals[is.na(pvals)] <- 0.5 ## set NaNs to 0.5
+pvals <- pvals[rowSums(is.na(pvals))==0,]
 colnames(pvals) <- paste0("N", c(1, 5, 10, 20, 50))
 
 ## Sort p-values
@@ -101,6 +106,9 @@ ggplot(dat) + geom_point(aes(x=x, y=y, colour=N)) + geom_line(aes(x=x, y=y, colo
   geom_abline(intercept=0, slope=1) + labs(x="p-value", y="")
 ```
 
+Figure 3.
+
+(re-run with new threshold set!)
 
 ```{r echo=FALSE, warning=FALSE}
 n <- 1000
@@ -112,7 +120,7 @@ pvals <- matrix(NA, nrow=num_iter, ncol=6)
 iter <- 1
 while( iter <= num_iter ){
   y <- rnorm(n) + c(rep(delta/2,n/2), rep(-delta/2,n/2))
-  results <- binary_segmentation(y)
+  results <- binary_segmentation(y, threshold=3.5)
   if ( length(results$changepoints) >=1 ){
     if ( results$changepoints[1] >= h & results$changepoints[1] <= (n-h) ){
       x <- calculate_pvals(y, results, N=50, h=h, include_original=TRUE, num_pvals=1)
@@ -131,13 +139,22 @@ colnames(pvals) <- paste0("N", c(1, 2, 5, 10, 20, 50))
 
 
 ### Figure 3(a): QQ plot vs. H0
-pvals_sorted <- matrix(NA, nrow=1000, ncol=6)
+pvals_sorted <- matrix(NA, nrow=num_iter, ncol=6)
 for ( i in 1:6 ){
   pvals_sorted[,i] <- sort(pvals[,i])
 }
-dat <- data.frame(x=rep(seq(0, 1, length.out=1000), 6), y=as.vector(pvals_sorted), 
-                  N=rep(as.factor(c(1, 2, 5, 10, 20, 50)), each=1000))
+dat <- data.frame(x=rep(seq(0, 1, length.out=num_iter), 6), y=as.vector(pvals_sorted), 
+                  N=rep(as.factor(c(1, 2, 5, 10, 20, 50)), each=num_iter))
+ggplot(dat) + geom_point(aes(x=x, y=y, colour=N)) + geom_line(aes(x=x, y=y, colour=N)) +
+  geom_abline(intercept=0, slope=1) + labs(x="p-value", y="")
+
+### Figure 3(b): QQ plot vs. p-values from Jewell & al.
+dat <- data.frame(x=rep(pvals_sorted[,1], 5), y=as.vector(pvals_sorted[,2:6]), 
+                  N=rep(as.factor(c(2, 5, 10, 20, 50)), each=num_iter))
 ggplot(dat) + geom_point(aes(x=x, y=y, colour=N)) + geom_line(aes(x=x, y=y, colour=N)) +
   geom_abline(intercept=0, slope=1) + labs(x="p-value", y="")
   
 ```
+
+
+Figure 4: Power plots.
