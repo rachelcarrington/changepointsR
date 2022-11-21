@@ -9,17 +9,14 @@
 #' @param N Number of random intervals; defaults to 1000. Ignored if \code{rand_ints} is specified.
 #' @param max_cps Maximum number of changepoints to return; defaults to \code{length(y) - 1} if \code{NULL}.
 #'
-#' @return List.
-#'
-#' \code{results}. Data frame.
-#'
-#' \code{changepoints}. Vector of changepoints detected.
-#'
-#' \code{rand_ints}. N x 2 matrix containing random intervals used in the algorithm.
-#'
-#' \code{threshold}. Value of the threshold used in the algorithm.
-#'
-#' \code{maxiter}. Maximum number of changepoints to detect.
+#' @return A list.
+#' \itemize{
+#' \item \code{results} Dataframe containing results
+#' \item \code{changepoints} Vector of changepoints detected
+#' \item \code{rand_ints} N x 2 matrix containing random intervals used in the algorithm.
+#' \item \code{threshold} Value of \code{lambda}
+#' \item \code{maxiter} Value of \code{maxiter}
+#' }
 #'
 #' @export
 #'
@@ -28,6 +25,7 @@
 #' lambda <- 4
 #' results <- narrowest_over_threshold(y, lambda, N=500)
 #' print(results$results)
+#' print(results$changepoints)
 #'
 narrowest_over_threshold <- function( y, lambda, rand_ints=NULL, N=1000, max_cps=NULL ){
 

@@ -6,16 +6,15 @@
 \usage{
 calculate_pvals(
   y,
-  results = NULL,
   method = "bs",
-  N = 100,
-  nus = NULL,
+  results = NULL,
+  N = 10,
   threshold = NULL,
   maxiter = NULL,
-  h = 2,
+  h = NULL,
   sigma2 = 1,
   eps0 = 0.01,
-  include_original = FALSE,
+  include_original = TRUE,
   num_pvals = NULL,
   random_samples = NULL,
   num_rand_samples = NULL,
@@ -27,15 +26,13 @@ calculate_pvals(
 \arguments{
 \item{y}{Numeric vector of data.}
 
-\item{results}{Output of changepoint algorithm (either \code{binary_segmentation}, \code{wild_binary_segmentation}, or
-\code{narrowest_over_threshold}.}
-
 \item{method}{Method used to generate changepoints. Options: \code{"bs"} for binary segmentation,
 \code{"wbs"} for wild or seeded binary segmentation, \code{"not"} for narrowest over threshold.}
 
-\item{N}{Positive integer. Number of random \eqn{\psi}'s to generate.}
+\item{results}{Output of changepoint algorithm (either \code{binary_segmentation}, \code{wild_binary_segmentation}, or
+\code{narrowest_over_threshold}).}
 
-\item{nus}{List of nu's for each changepoint.}
+\item{N}{Positive integer. Number of random \eqn{\psi}'s to generate; defaults to 10.}
 
 \item{threshold}{Minimum threshold for changepoint detection. Ignored if \code{results} is specified.}
 
@@ -50,7 +47,7 @@ changepoint of interest are used to define the window.}
 \item{eps0}{Hyperparameter for calculating S.}
 
 \item{include_original}{Logical. Whether to include the \eqn{\psi} value corresponding to the observed data in place of
-one of the random samples.}
+one of the random samples. Defaults to \code{TRUE}.}
 
 \item{num_pvals}{Integer or NA. Maximum number of p-values to calculate; if set to NA, it will default to \code{length(y) - 1}.
 If the number of changepoints detected by the binary segmentation algorithm is less than or equal to \code{num_pvals}, then
@@ -58,10 +55,10 @@ p-values will be calculated for all changepoints. If \code{num_pvals} is less th
 p-values will only be calculated for the first \code{num_pvals} changepoints, in order of detection.}
 
 \item{random_samples}{Matrix containing random intervals. For wild binary segmentation and narrowest over
-threshold only.}
+threshold only. Ignored if \code{results} specified or \code{method = "bs"}.}
 
 \item{num_rand_samples}{Number of random intervals to use for wild binary segmentation or narrowest over threshold.
-Ignored if \code{random_samples} is specified, \code{method = "bs"}, or \code{seeded = TRUE}.}
+Ignored if \code{random_samples} or \code{results} is specified, \code{method = "bs"}, or \code{seeded = TRUE}.}
 
 \item{seeded}{Logical. If \code{TRUE}, use seeded binary segmentation rather than wild binary segmentation. Only used if
 \code{method = "wbs"}.}
@@ -72,10 +69,18 @@ Ignored if \code{random_samples} is specified, \code{method = "bs"}, or \code{se
 for each \eqn{\psi} will be included in the output.}
 }
 \value{
-A vector of p-values
+A list.
+\itemize{
+\item \code{p_value} A vector of p-values
+\item \code{P_both} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} for each
+\eqn{\psi}; otherwise \code{NA}.
+\item \code{P_phi_in_S} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S)} for each \eqn{\psi};
+otherwise \code{NA}.
+}
 }
 \description{
-Calculate p-values for change in mean model
+Calculate p-values for detected changepoints, for the change in mean model. Changepoints can be detected using
+either binary segmentation, wild binary segmentation, or narrowest over threshold.
 }
 \details{
 Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
@@ -90,6 +95,9 @@ using this assumption.
 Alternatively \code{nus} can be specified manually.
 }
 \examples{
-# to do
+set.seed(100)
+y <- rnorm(200) + c(rep(1,50), rep(-1,50), rep(1,50), rep(-1,50))
+results <- binary_segmentation(y, threshold=4)
+calculate_pvals(y, method="bs", results=results, h=10)
 
 }

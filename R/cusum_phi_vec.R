@@ -1,6 +1,6 @@
 #' Calculate vector of CUSUM statistics for data y, in terms of phi
 #'
-#' @description Used inside \code{binary_segmentation_psi} (etc.)
+#' @description Used inside \code{calculate_pvals}.
 #' 
 #' @param y Numeric vector of data.
 #' @param nu Numeric vector.
@@ -11,6 +11,7 @@
 #'
 #' @return Returns \code{length(y)} x 2 matrix such that 
 #' \code{cusum_phi_vec(y, nu)^T %*% c(1, phi) = cusum(y_phi(y, nu, phi))}.
+#'
 #' @export
 #'
 #' @examples

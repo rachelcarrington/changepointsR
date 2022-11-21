@@ -10,7 +10,15 @@
 #' @param seeded Logical; if \code{TRUE}, seeded binary segmentation is used.
 #' @param decay Decay parameter for seeded binary segmentation. Only used if \code{seeded = TRUE}.
 #'
-#' @return A list
+#' @return A list.
+#' \itemize{
+#' \item \code{results} Dataframe containing results
+#' \item \code{changepoints} Vector of changepoints detected
+#' \item \code{rand_ints} N x 2 matrix containing random intervals used in the algorithm.
+#' \item \code{threshold} Value of \code{threshold}
+#' \item \code{maxiter} Value of \code{maxiter}
+#' }
+#'
 #' @export
 #'
 #' @examples
@@ -81,5 +89,5 @@ wild_binary_segmentation <- function( y, num_rand_samples=1000, random_samples=N
     iter <- ifelse( nrow(results0) == 0, maxiter + 1, iter + 1 )
   }
 
-  return( list( results=results, threshold=threshold, maxiter=maxiter, rand_ints=random_samples ) )
+  return( list( results=results, changepoints=results$b, rand_ints=random_samples, threshold=threshold, maxiter=maxiter ) )
 }

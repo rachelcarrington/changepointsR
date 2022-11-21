@@ -7,7 +7,7 @@
 binary_segmentation(y, threshold = NULL, maxiter = NULL)
 }
 \arguments{
-\item{y}{A numeric vector.}
+\item{y}{Numeric vector of data.}
 
 \item{threshold}{Threshold for determining changepoint candidates; defaults to \code{sqrt(2*log(n)*var(y))}.}
 
@@ -16,8 +16,8 @@ binary_segmentation(y, threshold = NULL, maxiter = NULL)
 \value{
 A list:
 \itemize{
-\item \code{results} Dataframe containing segmented intervals, changepoints, directions of change, ...
-\item \code{changepoints} Changepoints
+\item \code{results} Dataframe containing results
+\item \code{changepoints} Vector of changepoints detected
 \item \code{threshold} Value of \code{threshold}
 \item \code{maxiter} Value of \code{maxiter}
 }

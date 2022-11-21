@@ -30,7 +30,14 @@ wild_binary_segmentation(
 \item{decay}{Decay parameter for seeded binary segmentation. Only used if \code{seeded = TRUE}.}
 }
 \value{
-A list
+A list.
+\itemize{
+\item \code{results} Dataframe containing results
+\item \code{changepoints} Vector of changepoints detected
+\item \code{rand_ints} N x 2 matrix containing random intervals used in the algorithm.
+\item \code{threshold} Value of \code{threshold}
+\item \code{maxiter} Value of \code{maxiter}
+}
 }
 \description{
 Implements wild binary segmentation algorithm for changepoint detection.

@@ -1,8 +1,11 @@
 #' Calculate interval for binary segmentation
 #'
-#' @description Find values of phi which satisfy the required inequalities so that the binary segmentation algorithm returns (b, d);
-#' Option to only consider part of (b, d), e.g. if we just want b1 & d1 to be specified, & don't care about
-#' later values
+#' @description Find values of phi which satisfy the required inequalities so that applying binary segmentation to \eqn{y'(\phi)}
+#' returns \code{(b, d)}.
+#' Option to only consider part of \code{(b, d)}, e.g. if we want \code{b[1]} to be in the set of detected changepoints but are not concerned
+#' about other changepoints.
+#'
+#' @details Used inside \code{calculate_S} if \code{method = "bs"}.
 #'
 #' @param y Numeric vector of data.
 #' @param nu ...
@@ -15,10 +18,18 @@
 #' @param n.cp Maximum number of changepoints to detect of binary segmentation algorithm.
 #'
 #' @return A 2-dimensional vector
+#'
 #' @export
 #'
 #' @examples
-#' # to do
+#' set.seed(100)
+#' y <- rnorm(100) + c(rep(1,50), rep(-1,50))
+#' results <- binary_segmentation(y, threshold=4)
+#' b <- results$results$b[ results$results$cp==1 ]
+#' d <- results$results$d[ results$results$cp==1 ]
+#' h <- 10
+#' nu <- c(rep(0, b[1]-h), rep(1/h, h), rep(-1/h, h), rep(0, length(y)-b[1]-h))
+#' calculate_interval_bs(y, nu, b, d, threshold=4)
 #'
 calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NULL, n.cp=NULL ){
 
@@ -253,5 +264,5 @@ calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NU
 
   ### Inequalities are all satisfied by phi s.t. max_lower_bound < phi < min_upper_bound
 
-  return( c( max_lower_bound, min_upper_bound ) )
+  return( c(max_lower_bound, min_upper_bound) )
 }

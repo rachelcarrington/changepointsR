@@ -10,6 +10,7 @@
 #' Calculate CUSUM statistics for a vector \code{y}.
 #'
 #' @return A numeric vector.
+#'
 #' @export
 #'
 #' @examples

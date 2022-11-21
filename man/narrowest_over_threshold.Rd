@@ -18,17 +18,14 @@ narrowest_over_threshold(y, lambda, rand_ints = NULL, N = 1000, max_cps = NULL)
 \item{max_cps}{Maximum number of changepoints to return; defaults to \code{length(y) - 1} if \code{NULL}.}
 }
 \value{
-List.
-
-\code{results}. Data frame.
-
-\code{changepoints}. Vector of changepoints detected.
-
-\code{rand_ints}. N x 2 matrix containing random intervals used in the algorithm.
-
-\code{threshold}. Value of the threshold used in the algorithm.
-
-\code{maxiter}. Maximum number of changepoints to detect.
+A list.
+\itemize{
+\item \code{results} Dataframe containing results
+\item \code{changepoints} Vector of changepoints detected
+\item \code{rand_ints} N x 2 matrix containing random intervals used in the algorithm.
+\item \code{threshold} Value of \code{lambda}
+\item \code{maxiter} Value of \code{maxiter}
+}
 }
 \description{
 Apply the narrowest over threshold changepoint algorithm to a vector of data. The model is the piecewise constant mean model.
@@ -38,5 +35,6 @@ y <- rnorm(200) + c(rep(1,90), rep(-1,20), rep(1,90))
 lambda <- 4
 results <- narrowest_over_threshold(y, lambda, N=500)
 print(results$results)
+print(results$changepoints)
 
 }

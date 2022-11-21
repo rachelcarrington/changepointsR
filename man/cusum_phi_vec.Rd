@@ -24,7 +24,7 @@ Returns \code{length(y)} x 2 matrix such that
 \code{cusum_phi_vec(y, nu)^T \%*\% c(1, phi) = cusum(y_phi(y, nu, phi))}.
 }
 \description{
-Used inside \code{binary_segmentation_psi} (etc.)
+Used inside \code{calculate_pvals}.
 }
 \examples{
 set.seed(100)

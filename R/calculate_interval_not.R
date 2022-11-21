@@ -13,13 +13,14 @@
 #' that BS is run with a fixed number of iterations. If both n.cp and threshold are supplied, it will be assumed that
 #' n.cp is the maximum number of iterations, but the threshold will also be used as a minimum for C(t).
 #'
-#' @param y vector of data (ignored if cs & nuTy are supplied)
+#' @param y Numeric vector of data
 #' @param nu ...
-#' @param results Output of \code{wild_binary_segmentation}.
-#' @param nu2 value of ||nu||_2^2
-#' @param nuTy value of nu^T y
+#' @param results Output of \code{narrowest_over_threshold}
+#' @param nu2 Value of \eqn{||\nu||_2^2}
+#' @param nuTy Value of \eqn{\nu^T y}
 #'
 #' @return A 2-dimensional vector
+#'
 #' @export
 #'
 #' @examples

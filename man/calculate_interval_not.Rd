@@ -7,15 +7,15 @@
 calculate_interval_not(y, nu, results, nu2 = NULL, nuTy = NULL)
 }
 \arguments{
-\item{y}{vector of data (ignored if cs & nuTy are supplied)}
+\item{y}{Numeric vector of data}
 
 \item{nu}{...}
 
-\item{results}{Output of \code{wild_binary_segmentation}.}
+\item{results}{Output of \code{narrowest_over_threshold}}
 
-\item{nu2}{value of ||nu||_2^2}
+\item{nu2}{Value of \eqn{||\nu||_2^2}}
 
-\item{nuTy}{value of nu^T y}
+\item{nuTy}{Value of \eqn{\nu^T y}}
 }
 \value{
 A 2-dimensional vector

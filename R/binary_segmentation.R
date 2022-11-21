@@ -8,14 +8,14 @@
 #' \item there are no remaining points where the CUSUM statistic is above the threshold.
 #' }
 #'
-#' @param y A numeric vector.
+#' @param y Numeric vector of data.
 #' @param threshold Threshold for determining changepoint candidates; defaults to \code{sqrt(2*log(n)*var(y))}.
 #' @param maxiter Maximum number of changepoints to find; defaults to \code{length(y) - 1}.
 #'
 #' @return A list:
 #' \itemize{
-#' \item \code{results} Dataframe containing segmented intervals, changepoints, directions of change, ...
-#' \item \code{changepoints} Changepoints 
+#' \item \code{results} Dataframe containing results
+#' \item \code{changepoints} Vector of changepoints detected 
 #' \item \code{threshold} Value of \code{threshold}
 #' \item \code{maxiter} Value of \code{maxiter}
 #' }
