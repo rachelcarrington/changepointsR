@@ -108,8 +108,6 @@ ggplot(dat) + geom_point(aes(x=x, y=y, colour=N)) + geom_line(aes(x=x, y=y, colo
 
 Figure 3.
 
-(re-run with new threshold set!)
-
 ```{r echo=FALSE, warning=FALSE}
 n <- 1000
 h <- 10
@@ -158,3 +156,46 @@ ggplot(dat) + geom_point(aes(x=x, y=y, colour=N)) + geom_line(aes(x=x, y=y, colo
 
 
 Figure 4: Power plots.
+
+```{r echo=FALSE, warning=FALSE}
+set.seed(100)
+N_list <- c(1, 2, 5, 10, 20)
+h <- 10
+n <- 1000
+num_iter <- 100
+power_results <- numeric(0)
+for ( delta in c(1, 2, 3) ){
+  pvals <- matrix(NA, nrow=num_iter, ncol=6)
+  iter <- 1
+  while( iter <= num_iter ){
+    y <- rnorm(n) + c(rep(delta/2,n/2), rep(-delta/2,n/2))
+    results <- binary_segmentation(y, threshold=3.5)
+    if ( length(results$changepoints) >=1 ){
+      if ( results$changepoints[1] >= h & results$changepoints[1] <= (n-h) ){
+        x <- calculate_pvals(y, results=results, N=50, h=h, include_original=TRUE, num_pvals=1, return_probs=TRUE)
+        pvals[iter,1] <- x$P_both[50] / x$P_phi_in_S[50]
+        pvals[iter,2] <- sum(x$P_both[c(1,50)]) / sum(x$P_phi_in_S[c(1,50)])
+        pvals[iter,3] <- sum(x$P_both[c(1:4,50)]) / sum(x$P_phi_in_S[c(1:4,50)])
+        pvals[iter,4] <- sum(x$P_both[c(1:9,50)]) / sum(x$P_phi_in_S[c(1:9,50)])
+        pvals[iter,5] <- sum(x$P_both[c(1:19,50)]) / sum(x$P_phi_in_S[c(1:19,50)])
+        pvals[iter,6] <- sum(x$P_both) / sum(x$P_phi_in_S)
+        iter <- iter + 1
+      }
+    }
+  }
+  pvals[pvals>1] <- 1 ## some p-values are slightly above 1 because of floating point errors
+  colnames(pvals) <- paste0("N", c(1, 2, 5, 10, 20, 50))
+  
+  for ( i in 1:5 ){
+    power_results <- rbind(power_results, c(h, delta, N_list[i], sum(pvals[,i] < 0.05)))
+  }
+}
+
+colnames(power_results) <- c("h", "delta", "N", "power")
+power_results <- data.frame(power_results)
+power_results$delta <- as.factor(power_results$delta)
+
+ggplot(power_results) + geom_point(aes(x=N, y=power/num_iter, colour=delta)) + 
+  geom_line(aes(x=N, y=power/num_iter, colour=delta)) +
+  labs(x="N", y="Power") + coord_cartesian(ylim=c(0.25, 1), xlim=c(0, 20))
+```
