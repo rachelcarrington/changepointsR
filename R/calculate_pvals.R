@@ -101,10 +101,6 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
     num_pvals <- length(b)
   }
 
-  if ( is.null(nus) ){
-    nus <- as.list(rep(NA, num_pvals))
-  }
-
   Z <- diag(2*h) - matrix( 1/(2*h), nrow=2*h, ncol=2*h ) - h/2 * crossprod(t(c(rep(1/h, h), rep(-1/h, h))))
   Z[ abs(Z) < 10^(-10) ] <- 0
   U <- svd(Z)$u[,1:(2*h-2)]
