@@ -38,7 +38,6 @@
 #' \item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. In this case \code{h} should be supplied.
 #' \item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. In this case \code{h} should be set to \code{NULL}.
 #' }
-#' Alternatively \code{nus} can be specified manually.
 #'
 #' @return A list.
 #' \itemize{
