@@ -14,6 +14,7 @@
 #' \code{results} is specified
 #' @param h Positive integer (>=2) or \code{NULL}. Window size. If \code{NULL} then the changepoints either side of the
 #' changepoint of interest are used to define the window.
+#' @param cp_bound Logical. ...
 #' @param sigma2 Variance of \code{y}.
 #' @param eps0 Hyperparameter for calculating S.
 #' @param include_original Logical. Whether to include the \eqn{\psi} value corresponding to the observed data in place of
@@ -36,6 +37,8 @@
 #' Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
 #' \itemize{
 #' \item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. In this case \code{h} should be supplied.
+#' If \code{cp_bound} is \code{TRUE}, then if there is a another estimated changepoint within \code{h} of \eqn{\tau_j}, this will be used.
+#' \item There are no other changepoints within ...
 #' \item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. In this case \code{h} should be set to \code{NULL}.
 #' }
 #'
@@ -56,7 +59,11 @@
 #' results <- binary_segmentation(y, threshold=4)
 #' calculate_pvals(y, method="bs", results=results, h=10)
 #'
-calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, maxiter=NULL, h=NULL, sigma2=1, eps0=0.01,
+#' y <- rnorm(200) + c(rep(1,50), rep(-1,50), rep(1,50), rep(-1,50))
+#' results <- binary_segmentation(y, threshold=4)
+#' calculate_pvals(y, method="bs", results=results, h=10)
+#'
+calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, maxiter=NULL, h=NULL, cp_bound=TRUE, sigma2=1, eps0=0.01,
                             include_original=TRUE, num_pvals=NULL, random_samples=NULL, num_rand_samples=NULL, seeded=FALSE,
                             decay=NULL, return_probs=FALSE){
 
@@ -110,7 +117,7 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
     if ( is.null(h) ){
       cps <- c(0, sort(b, decreasing=FALSE), n)
       j <- (1:length(cps))[cps==b[1]]
-      nu <- rep( 0, n )
+      nu <- rep(0, n)
       nu[ (cps[j-1]+1):cps[j] ] <- 1/(cps[j] - cps[j-1])
       nu[ (cps[j]+1):cps[j+1] ] <- -1/(cps[j+1] - cps[j])
       nu2 <- 1/(cps[j] - cps[j-1]) + 1/(cps[j+1] - cps[j])
