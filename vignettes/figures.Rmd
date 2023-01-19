@@ -38,7 +38,7 @@ while( iter <= num_iter ){
   results <- binary_segmentation(y, threshold=3.5)
   if ( length(results$changepoints) >= 1 ){ ## only keep simulations for which the changepoint algorithm detects at least one changepoint
     if ( results$changepoints[1] >= h & results$changepoints[1] <= (n-h) ){
-      x <- calculate_pvals(y, results, N=50, h=h, sigma2=1, num_pvals=1)
+      x <- calculate_pvals(y, results=results, N=50, h=h, sigma2=1, num_pvals=1, return_probs=TRUE)
       pvals[iter,1] <- x$P_both[1] / x$P_phi_in_S[1]
       pvals[iter,2] <- sum(x$P_both[1:5]) / sum(x$P_phi_in_S[1:5])
       pvals[iter,3] <- sum(x$P_both[1:10]) / sum(x$P_phi_in_S[1:10])
@@ -79,7 +79,7 @@ while( iter <= num_iter ){
   results <- binary_segmentation(y, threshold=3.5)
   if ( length(results$changepoints) >= 1 ){
     if ( results$changepoints[1] >= h & results$changepoints[1] <= (n-h) ){
-      x <- calculate_pvals(y, results, N=50, h=h, sigma2=1, num_pvals=1, include_original=TRUE)
+      x <- calculate_pvals(y, results=results, N=50, h=h, sigma2=1, num_pvals=1, include_original=TRUE, return_probs=TRUE)
       pvals[iter,1] <- x$P_both[50] / x$P_phi_in_S[50]
       pvals[iter,2] <- sum(x$P_both[c(1:4,50)]) / sum(x$P_phi_in_S[c(1:4,50)])
       pvals[iter,3] <- sum(x$P_both[c(1:9,50)]) / sum(x$P_phi_in_S[c(1:9,50)])
@@ -121,7 +121,7 @@ while( iter <= num_iter ){
   results <- binary_segmentation(y, threshold=3.5)
   if ( length(results$changepoints) >=1 ){
     if ( results$changepoints[1] >= h & results$changepoints[1] <= (n-h) ){
-      x <- calculate_pvals(y, results, N=50, h=h, include_original=TRUE, num_pvals=1)
+      x <- calculate_pvals(y, results=results, N=50, h=h, include_original=TRUE, num_pvals=1, return_probs=TRUE)
       pvals[iter,1] <- x$P_both[50] / x$P_phi_in_S[50]
       pvals[iter,2] <- sum(x$P_both[c(1,50)]) / sum(x$P_phi_in_S[c(1,50)])
       pvals[iter,3] <- sum(x$P_both[c(1:4,50)]) / sum(x$P_phi_in_S[c(1:4,50)])
