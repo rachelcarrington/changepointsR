@@ -35,12 +35,8 @@
 #' @details
 #' Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
 #' \itemize{
-#' \item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. If \code{nus = NULL} but \code{h} is supplied,
-#' then the value of \eqn{\nu} for each changepoint will be calculated using this assumption.
-#' \item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. If \eqn{\tau_j} is the first
-#' changepoint, then \eqn{\tau_{j-1}} is taken to be 0; if it is the last changepoint, \eqn{\tau_{j+1}} is taken to be
-#' \code{length(y)}. If \code{nus = NULL} and \code{h = NULL}, then the value of \eqn{\nu} for each changepoint will be calculated
-#' using this assumption.
+#' \item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. In this case \code{h} should be supplied.
+#' \item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. In this case \code{h} should be set to \code{NULL}.
 #' }
 #' Alternatively \code{nus} can be specified manually.
 #'
@@ -64,8 +60,6 @@
 calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, maxiter=NULL, h=NULL, sigma2=1, eps0=0.01,
                             include_original=TRUE, num_pvals=NULL, random_samples=NULL, num_rand_samples=NULL, seeded=FALSE,
                             decay=NULL, return_probs=FALSE){
-
-  #### if num_pvals > 1, nus should be a list
 
   stopifnot( method %in% c("bs", "wbs", "not") )
 
