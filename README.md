@@ -13,8 +13,8 @@ The following changepoint algorithms are included:
 devtools::install_github("rachelcarrington/changepointsR")
 ```
 
-To use L0 inference, you will also need to download the package ChangepointInference from
-```
+If you want to use L0 inference, you will also need to download the package ChangepointInference from
+```{r echo=TRUE, eval=FALSE}
 devtools::install_github("jewellsean/ChangepointInference")
 ```
 see https://github.com/jewellsean/ChangepointInference
