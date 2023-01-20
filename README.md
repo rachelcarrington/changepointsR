@@ -7,19 +7,19 @@ The following changepoint algorithms are included:
 * wild binary segmentation
 
 ********************************************************************************************************************************************
-### Installation
+## Installation
 
+To install this package:
 ```
 devtools::install_github("rachelcarrington/changepointsR")
 ```
 
-If you want to use L0 inference, you will also need to download the package ChangepointInference from
-```{r echo=TRUE, eval=FALSE}
+If you want to use L0 inference, you will also need to download the package ChangepointInference (see https://github.com/jewellsean/ChangepointInference):
+```
 devtools::install_github("jewellsean/ChangepointInference")
 ```
-see https://github.com/jewellsean/ChangepointInference
 
-To use seeded binary segmentation, 
+To use seeded binary segmentation, you will need to download the function \code{seedBS}
 
 
 ********************************************************************************************************************************************
