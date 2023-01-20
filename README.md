@@ -36,8 +36,11 @@ To do post-selection inference:
 * Use `calculate_pvals` for binary segmentation, wild/seeded binary segmentation, and narrowest over threshold. </br>
 * Use `l0_segmentation_psi` for L0 segmentation.
 
-Dependencies
+********************************************************************************************************************************************
 
-For plots: </br>
-ggplot2 </br>
-Changepoint (for data)
+## Example
+
+```{r}
+y = rnorm(100)
+plot(y)
+```
