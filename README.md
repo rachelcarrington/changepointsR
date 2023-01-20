@@ -1,15 +1,29 @@
 # changepointsR
 
-Changepoint algorithms and inference for change in mean model.
+Changepoint algorithms and inference for change in mean model. Paper: https://arxiv.org/pdf/2301.05636.pdf
 
 The following changepoint algorithms are included:
 * binary segmentation (binary_segmentation)
 * wild binary segmentation
 
+********************************************************************************************************************************************
+### Installation
+
+```
+devtools::install_github("rachelcarrington/changepointsR")
+```
+
 To use L0 inference, you will also need to download the package ChangepointInference from
-https://github.com/jewellsean/ChangepointInference
-</br>
-see https://github.com/jewellsean/ChangepointInference#readme
+```
+devtools::install_github("jewellsean/ChangepointInference")
+```
+see https://github.com/jewellsean/ChangepointInference
+
+To use seeded binary segmentation, 
+
+
+********************************************************************************************************************************************
+
 
 
 Changepoint algorithms: </br>
