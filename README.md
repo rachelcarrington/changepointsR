@@ -15,7 +15,7 @@ If you want to use L0 inference, you will also need to download the package Chan
 devtools::install_github("jewellsean/ChangepointInference")
 ```
 
-To use seeded binary segmentation, you will need to download the function `seedBS` from https://github.com/kovacssolt/SeedBinSeg.
+To use seeded binary segmentation, you will need to download seedBS.R` from https://github.com/kovacssolt/SeedBinSeg.
 
 Other dependencies (CRAN packages):
 * ggplot2 (for plots)
