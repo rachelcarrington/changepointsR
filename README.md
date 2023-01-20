@@ -2,8 +2,13 @@
 
 Changepoint algorithms and inference for change in mean model.
 
+The following changepoint algorithms are included:
+* binary segmentation (binary_segmentation)
+* wild binary segmentation
+
 To use L0 inference, you will also need to download the package ChangepointInference from
 https://github.com/jewellsean/ChangepointInference
+</br>
 see https://github.com/jewellsean/ChangepointInference#readme
 
 
