@@ -23,6 +23,7 @@ Other dependencies (CRAN packages):
 
 ********************************************************************************************************************************************
 
+### Changepoint algorithms
 The following changepoint algorithms are included:
 * binary segmentation: `binary_segmentation`
 * wild binary segmentation: `wild_binary_segmentation`
@@ -63,9 +64,9 @@ set.seed(100)
 y <- rnorm(200) + c(rep(1,40), rep(-1,40), rep(1,40), rep(-1,40), rep(1,40))
 
 ### Implement L0 segmentation
-results <- binary_segmentation(y, threshold=4)
+results <- changepoint_estimates(y, "L0", 10)
 
 ### Calculate p-values
-pvals <- l0_segmentation_psi(y, method="bs", results=results, N=10, h=10, return_probs=TRUE)
+pvals <- l0_segmentation_psi(y, lambda=10, N=10, h=10, sigma2=1, include_original=TRUE, num_pvals=1)
 print(pvals)
 ```
