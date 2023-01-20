@@ -45,6 +45,6 @@ print(psi)
 To get values of $P(|\phi| > |\phi_{obs}| \cap \phi \in S_{\psi})$ and $P(\psi \in S_{\psi})$ for each $\psi$, set return_probs=TRUE.
 
 ```{r p_values_2, warning=FALSE}
-psi <- calculate_pvals(y, results, method="bs", N=10, h=10, sigma2=1, include_original=TRUE, return_probs=TRUE)
+psi <- calculate_pvals(y, method="bs", results=results, N=10, h=10, sigma2=1, include_original=TRUE, return_probs=TRUE)
 print(psi)
 ```
