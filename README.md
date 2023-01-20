@@ -38,9 +38,34 @@ To do post-selection inference:
 
 ********************************************************************************************************************************************
 
-## Example
+## Examples
 
-```{r}
-y = rnorm(100)
-plot(y)
+Binary segmentation:
+
+```
+### Generate some data
+set.seed(100)
+y <- rnorm(200) + c(rep(1,40), rep(-1,40), rep(1,40), rep(-1,40), rep(1,40))
+
+### Implement binary segmentation
+results <- binary_segmentation(y, threshold=4)
+
+### Calculate p-values
+pvals <- calculate_pvals(y, method="bs", results=results, N=10, h=10, return_probs=TRUE)
+print(pvals)
+```
+
+L0 segmentation:
+
+```
+### Generate some data
+set.seed(100)
+y <- rnorm(200) + c(rep(1,40), rep(-1,40), rep(1,40), rep(-1,40), rep(1,40))
+
+### Implement L0 segmentation
+results <- binary_segmentation(y, threshold=4)
+
+### Calculate p-values
+pvals <- l0_segmentation_psi(y, method="bs", results=results, N=10, h=10, return_probs=TRUE)
+print(pvals)
 ```
