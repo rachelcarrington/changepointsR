@@ -17,10 +17,6 @@ devtools::install_github("jewellsean/ChangepointInference")
 
 To use seeded binary segmentation, you will need to download seedBS.R` from https://github.com/kovacssolt/SeedBinSeg.
 
-Other dependencies (CRAN packages):
-* ggplot2 (for plots)
-* changepoint (for data)
-
 ********************************************************************************************************************************************
 
 ### Changepoint algorithms
