@@ -32,7 +32,7 @@
 #' @param seeded Logical. If \code{TRUE}, use seeded binary segmentation rather than wild binary segmentation. Only used if
 #' \code{method = "wbs"}.
 #' @param decay Decay parameter for seeded binary segmentation. Only used if \code{method = "wbs"} and \code{seeded = TRUE}.
-#' @param return_probs Logical. If \code{TRUE}, the values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} and \eqn{Pr(\phi \in S)}
+#' @param return_probs Logical. If \code{TRUE}, the values of \eqn{Pr(\phi \in S \& |\phi| > |\phi_{obs}|)} and \eqn{Pr(\phi \in S)}
 #' for each \eqn{\psi} will be included in the output.
 #'
 #' @details
@@ -50,7 +50,7 @@
 #' @return A list.
 #' \itemize{
 #' \item \code{p_value} A vector of p-values
-#' \item \code{P_both} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} for each
+#' \item \code{P_both} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S \& |\phi| > |\phi_{obs}|)} for each
 #' \eqn{\psi}; otherwise \code{NA}.
 #' \item \code{P_phi_in_S} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S)} for each \eqn{\psi};
 #' otherwise \code{NA}.

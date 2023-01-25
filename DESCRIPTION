@@ -5,16 +5,16 @@ Authors@R:
     person("Rachel", "Carrington", , "r.j.carrington@lancaster.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-1537-609X"))
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: use_mit_license()
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    changepoint,
+    ggplot2
 VignetteBuilder: knitr
 Imports: 
-    changepoint,
-    ChangepointInference,
-    ggplot2
+    ChangepointInference
+

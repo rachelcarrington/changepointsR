@@ -12,6 +12,7 @@ calculate_pvals(
   threshold = NULL,
   maxiter = NULL,
   h = NULL,
+  cp_bound = TRUE,
   sigma2 = 1,
   eps0 = 0.01,
   include_original = TRUE,
@@ -42,6 +43,8 @@ calculate_pvals(
 \item{h}{Positive integer (>=2) or \code{NULL}. Window size. If \code{NULL} then the changepoints either side of the
 changepoint of interest are used to define the window.}
 
+\item{cp_bound}{Logical. ...}
+
 \item{sigma2}{Variance of \code{y}.}
 
 \item{eps0}{Hyperparameter for calculating S.}
@@ -65,14 +68,14 @@ Ignored if \code{random_samples} or \code{results} is specified, \code{method = 
 
 \item{decay}{Decay parameter for seeded binary segmentation. Only used if \code{method = "wbs"} and \code{seeded = TRUE}.}
 
-\item{return_probs}{Logical. If \code{TRUE}, the values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} and \eqn{Pr(\phi \in S)}
+\item{return_probs}{Logical. If \code{TRUE}, the values of \eqn{Pr(\phi \in S \& |\phi| > |\phi_{obs}|)} and \eqn{Pr(\phi \in S)}
 for each \eqn{\psi} will be included in the output.}
 }
 \value{
 A list.
 \itemize{
 \item \code{p_value} A vector of p-values
-\item \code{P_both} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S & |\phi| > |\phi_{obs}|)} for each
+\item \code{P_both} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S \& |\phi| > |\phi_{obs}|)} for each
 \eqn{\psi}; otherwise \code{NA}.
 \item \code{P_phi_in_S} If \code{return_probs=TRUE}, a matrix containing values of \eqn{Pr(\phi \in S)} for each \eqn{\psi};
 otherwise \code{NA}.
@@ -85,17 +88,18 @@ either binary segmentation, wild binary segmentation, or narrowest over threshol
 \details{
 Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
 \itemize{
-\item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. If \code{nus = NULL} but \code{h} is supplied,
-then the value of \eqn{\nu} for each changepoint will be calculated using this assumption.
-\item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. If \eqn{\tau_j} is the first
-changepoint, then \eqn{\tau_{j-1}} is taken to be 0; if it is the last changepoint, \eqn{\tau_{j+1}} is taken to be
-\code{length(y)}. If \code{nus = NULL} and \code{h = NULL}, then the value of \eqn{\nu} for each changepoint will be calculated
-using this assumption.
+\item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. In this case \code{h} should be supplied.
+If \code{cp_bound} is \code{TRUE}, then if there is a another estimated changepoint within \code{h} of \eqn{\tau_j}, this will be used.
+\item There are no other changepoints within ...
+\item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. In this case \code{h} should be set to \code{NULL}.
 }
-Alternatively \code{nus} can be specified manually.
 }
 \examples{
 set.seed(100)
+y <- rnorm(200) + c(rep(1,50), rep(-1,50), rep(1,50), rep(-1,50))
+results <- binary_segmentation(y, threshold=4)
+calculate_pvals(y, method="bs", results=results, h=10)
+
 y <- rnorm(200) + c(rep(1,50), rep(-1,50), rep(1,50), rep(-1,50))
 results <- binary_segmentation(y, threshold=4)
 calculate_pvals(y, method="bs", results=results, h=10)

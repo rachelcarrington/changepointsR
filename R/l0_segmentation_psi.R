@@ -19,9 +19,9 @@
 #' \item \code{p_value} Vector of p-values
 #' \item \code{p_value_orig} Vector of p-values obtained using fixed \eqn{\psi = \psi_{obs}}
 #' \item \code{nuTy} Value of \eqn{\nu^T y}
-#' \item \code{P_both} Matrix containing values of \eqn{Pr(|\phi| > |\phi_{obs}| & \phi \in S)}
+#' \item \code{P_both} Matrix containing values of \eqn{Pr(|\phi| > |\phi_{obs}| \& \phi \in S)}
 #' \item \code{P_phi_in_S} Matrix containing values of \eqn{Pr(\phi \in S)}
-#' \item \code{P_both_orig} Vector containing values of \eqn{Pr(|\phi| > |\phi_{obs}| & \phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
+#' \item \code{P_both_orig} Vector containing values of \eqn{Pr(|\phi| > |\phi_{obs}| \& \phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
 #' \item \code{P_phi_in_S_orig} Vector containing values of \eqn{Pr(\phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
 #' }
 #'
@@ -34,11 +34,11 @@
 #'
 l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_original=TRUE, num_pvals=NULL){
 
-  library(ChangepointInference)
+#  library(ChangepointInference)
 
   n <- length(y)
 
-  fit <- changepoint_estimates(y, "L0", lambda)
+  fit <- ChangepointInference::changepoint_estimates(y, "L0", lambda)
   b <- fit$change_pts
   if ( is.null( num_pvals ) ){
     num_pvals <- length(fit$change_pts)
@@ -48,7 +48,7 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
     ### Original p-values
     P_both_orig <- P_phi_in_S_orig <- rep(0, num_pvals)
     pvals_orig <- rep(NA, num_pvals)
-    z <- changepoint_inference(y, "L0-fixed", tuning_parameter=lambda, window_size=h, sig=sig, return_conditioning_set=TRUE)
+    z <- ChangepointInference::changepoint_inference(y, "L0-fixed", tuning_parameter=lambda, window_size=h, sig=sig, return_conditioning_set=TRUE)
 
     for ( jj in 1:num_pvals ){
       nu <- c(rep(0,b[jj]-h), rep(1/h,h), rep(-1/h,h), rep(0,n-b[jj]-h))
@@ -116,7 +116,7 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
           y_new <- y
           y_new[(b[j]-h+1):(b[j]+h)] <- y_new[(b[j]-h+1):(b[j]+h)] + U %*% Psi[iter,]
 
-          fit_new <- changepoint_estimates(y_new, "L0", lambda)
+          fit_new <- ChangepointInference::changepoint_estimates(y_new, "L0", lambda)
           b_new <- fit_new$change_pts
 
           ### I think this works (we need to make sure that b[j] %in% b_new)
@@ -124,10 +124,10 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
           while ( !( b[j] %in% b_new ) ){
             y_new <- y_phi(y_new, nu, phi)
             phi <- phi + 10
-            b_new <- changepoint_estimates(y_new, "L0", lambda)$change_pts
+            b_new <- ChangepointInference::changepoint_estimates(y_new, "L0", lambda)$change_pts
           }
 
-          z <- changepoint_inference(y_new, 'L0-fixed', lambda, window_size = h, sig = sig, return_conditioning_sets = TRUE)
+          z <- ChangepointInference::changepoint_inference(y_new, 'L0-fixed', lambda, window_size = h, sig = sig, return_conditioning_sets = TRUE)
 
           ### Make sure we select the right changepoint!
           S <- z$conditioning_sets[[ (1:length(z$change_pts))[ z$change_pts==b[j] ] ]]

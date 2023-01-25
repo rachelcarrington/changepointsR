@@ -56,8 +56,6 @@ or \code{method = "bs"}.}
 \item{seeded}{Logical. For \code{method = "wbs"} only, whether to use seeded binary segmentation.}
 
 \item{decay}{Decay parameter for seeded binary segmentation. Only used if \code{method = "wbs"} and \code{seeded = TRUE}.}
-
-\item{num_pvals}{Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}.}
 }
 \value{
 A dataframe containing intervals with the changepoints obtained when \eqn{\phi} is in each interval.

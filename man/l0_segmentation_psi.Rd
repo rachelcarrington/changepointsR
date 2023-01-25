@@ -40,9 +40,9 @@ A list:
 \item \code{p_value} Vector of p-values
 \item \code{p_value_orig} Vector of p-values obtained using fixed \eqn{\psi = \psi_{obs}}
 \item \code{nuTy} Value of \eqn{\nu^T y}
-\item \code{P_both} Matrix containing values of \eqn{Pr(|\phi| > |\phi_{obs}| & \phi \in S)}
+\item \code{P_both} Matrix containing values of \eqn{Pr(|\phi| > |\phi_{obs}| \& \phi \in S)}
 \item \code{P_phi_in_S} Matrix containing values of \eqn{Pr(\phi \in S)}
-\item \code{P_both_orig} Vector containing values of \eqn{Pr(|\phi| > |\phi_{obs}| & \phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
+\item \code{P_both_orig} Vector containing values of \eqn{Pr(|\phi| > |\phi_{obs}| \& \phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
 \item \code{P_phi_in_S_orig} Vector containing values of \eqn{Pr(\phi \in S)} for fixed \eqn{\psi = \psi_{obs}}
 }
 }

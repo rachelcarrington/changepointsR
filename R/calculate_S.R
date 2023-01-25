@@ -16,7 +16,6 @@
 #' @param eps0 Hyperparameter.
 #' @param first_cp_only Logical. If \code{TRUE}, condition on the fact that the changepoint of interest is in the model; 
 #' if \code{FALSE}, condition on all changepoints. Defaults to \code{FALSE}.
-#' @param num_pvals Integer. Maximum number of p-values to calculate; defaults to \code{length(y) - 1}.
 #' @param method Character. One of \code{"bs"} (binary segmentation), \code{"wbs"} (wild binary segmentation), or \code{"not"} (narrowest
 #' over threshold). Defaults to \code{"bs"}.
 #' @param rand_ints Matrix containing random intervals for changepoint algorithm. Ignored if \code{results} specified

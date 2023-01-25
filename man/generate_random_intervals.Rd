@@ -20,8 +20,8 @@ An N x 2 matrix of integers
 Generate random intervals within the range (1,n). For use in wild binary segmentation and narrowest over threshold algorithms.
 }
 \details{
-If the number of intervals supplied is greater than the total number of possible unique intervals contained in \link{1,n} with width at least
-\code{min_width}, then the output will be a list of all possible intervals contained in \link{1,n}.
+If the number of intervals supplied is greater than the total number of possible unique intervals contained in \eqn{[1,n]} with width at least
+\code{min_width}, then the output will be a list of all possible intervals contained in \eqn{[1,n]}.
 }
 \examples{
 generate_random_intervals(100, 10, 2)
