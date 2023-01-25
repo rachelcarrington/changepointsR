@@ -156,7 +156,7 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
       nu2 <- 1/h1 + 1/h2
     }
     nh <- h1 + h2
-
+    
     nuTy <- as.numeric(t(nu) %*% y)
 
     #### Construct Y s.t. y_t = Y_t^T (1,phi,Psi)
