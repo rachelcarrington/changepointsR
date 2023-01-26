@@ -14,10 +14,11 @@
 #' \code{results} is specified
 #' @param h Positive integer (>=2) or vector of length 2 or \code{NULL}. Window size. If \code{NULL} then the changepoints either side of 
 #' the changepoint of interest are used to define the window.
-#' @param gamma Number in (0, 1]. If \code{h = NULL}, then ...
-#' @param cp_bound Logical. If \code{TRUE}, then if there is an estimated changepoint within the window that fix under the null hypothesis,
+#' @param gamma Number in \code{(0, 1]}. If \code{h = NULL}, then \eqn{h} is taken to be \code{gamma} times the distance between the changepoint
+#' of interest and the estimated changepoints on either side. Ignored if \code{h} specified; defaults to \code{1}.
+#' @param cp_bound Logical. If \code{TRUE}, then if there is an estimated changepoint within the window that is fixed under the null hypothesis,
 #' this changepoint will be used as the boundary of the window.
-#' @param sigma2 Variance of \code{y}.
+#' @param sigma2 Variance of \code{y}. Defaults to \code{1} if not specified.
 #' @param eps0 Hyperparameter for calculating S.
 #' @param include_original Logical. Whether to include the \eqn{\psi} value corresponding to the observed data in place of
 #' one of the random samples. Defaults to \code{TRUE}.
@@ -40,11 +41,12 @@
 #' \itemize{
 #' \item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. In this case \code{h} should be supplied. It is also possible
 #' to use different values of \code{h} on either side of \eqn{\tau_j}, in which case \code{h} should be a vector of length 2.
-#' If \code{cp_bound = TRUE}, then if there is another estimated changepoin within the \code{h} of \eqn{\tau_j} then the window size used
+#' If \code{cp_bound = TRUE}, then if there is another estimated changepoint within the \code{h} of \eqn{\tau_j} then the window size used
 #' will be the minimum of \code{h} and the distance between \eqn{\tau_j} and the closest estimated changepoint to \eqn{\tau_j}.
 #' \item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. In this case \code{h} should be set to \code{NULL}
 #' and \code{gamma} should be 1. (This is the default for the function.)
-#' \item ...
+#' \item There are no other changepoints between the midpoint of \eqn{\tau_{j-1}} and \eqn{\tau_j} and the midpoint of \eqn{\tau_j} and 
+#' \eqn{\tau_{j+1}}. In this case use \code{h = NULL} and \code{gamma = 0.5}.
 #' }
 #'
 #' @return A list.
@@ -114,49 +116,72 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
     ## Calculate nu
     if ( is.null(h) ){ # use changepoint on either side to determine h
+
       cps <- c(0, sort(b, decreasing=FALSE), n)
       j <- (1:length(cps))[cps==b[jj]]
-      nu <- rep(0, n)
-      nu[ (cps[j-1]+1):cps[j] ] <- 1/(cps[j] - cps[j-1])
-      nu[ (cps[j]+1):cps[j+1] ] <- -1/(cps[j+1] - cps[j])
-      nu2 <- 1/(cps[j] - cps[j-1]) + 1/(cps[j+1] - cps[j])
-      h1 <- cps[j] - cps[j-1]
-      h2 <- cps[j+1] - cps[j]
+      h1 <- ceiling( gamma*(cps[j] - cps[j-1]) )
+      h2 <- ceiling( gamma*(cps[j+1] - cps[j]) )
+
     } else if ( length(h) >= 2 ) {
-      if ( b[jj] - h[1] < 0 ){
-        nu <- c( rep(1/b[jj], b[jj]), rep(-1/h[2], h[2]), rep(0, n - b[jj] - h[2]) )
-        nu2 <- 1/b[jj] + 1/h[2]
-        h1 <- b[jj]
-        h2 <- h[2]
-      } else if ( b[jj] + h[2] > n ){
-        nu <- c( rep(0, b[jj] - h[1]), rep(1/h[1], h[1]), rep(-1/(n - b[jj]), n - b[jj]) )
-        nu2 <- 1/h[1] + 1/(n - b[jj])
-        h1 <- h[1]
-        h2 <- n - b[jj]
+
+      if ( cp_bound ){
+        cps <- c(0, sort(b[-jj]), n)
+        if ( cps %in% (b[jj] - h[1] + 1):b[jj] ){
+          h1 <- b[jj] - max(cps[cps %in% (b[jj] - h[1] + 1):b[jj]])
+        } else {
+          h1 <- h[1]
+        }
+        if ( cps %in% (b[jj] + 1):(b[jj] + h[2]) ){
+          h2 <- max(cps[cps %in% (b[jj] + 1):(b[jj] + h[2])]) - b[jj]
+        } else {
+          h2 <- h[2]
+        }
       } else {
-        nu <- c( rep(0, b[jj] - h[1]), rep(1/h[1], h[1]), rep(-1/h[2], h[2]), rep(0, n - b[jj] - h[2]) )
-        nu2 <- 1/h[1] + 1/h[2]
-        h1 <- h[1]
-        h2 <- h[2]
+        if ( b[jj] - h[1] < 0 ){
+          h1 <- b[jj]
+          h2 <- h[2]
+        } else if ( b[jj] + h[2] > n ){
+          h1 <- h[1]
+          h2 <- n - b[jj]
+        } else {
+          h1 <- h[1]
+          h2 <- h[2]
+        }
       }
+
     } else {
+
       stopifnot( h >= 2 )
-      cps <- c(0, sort(b[-jj]), n)
-      if ( cps %in% (b[jj] - h + 1):b[jj] ){
-        h1 <- b[jj] - max(cps[cps %in% (b[jj] - h + 1):b[jj]])
+      if ( cp_bound ){
+        cps <- c(0, sort(b[-jj]), n)
+        if ( cps %in% (b[jj] - h + 1):b[jj] ){
+          h1 <- b[jj] - max(cps[cps %in% (b[jj] - h + 1):b[jj]])
+        } else {
+          h1 <- h
+        }
+        if ( cps %in% (b[jj] + 1):(b[jj] + h) ){
+          h2 <- max(cps[cps %in% (b[jj] + 1):(b[jj] + h)]) - b[jj]
+        } else {
+          h2 <- h
+        }
       } else {
-        h1 <- h
+        if ( b[jj] - h < 0 ){
+          h1 <- b[jj]
+        } else {
+          h1 <- h
+        }
+        if ( b[jj] + h > n ){
+          h2 <- n - b[jj]
+        } else {
+          h2 <- h
+        }
       }
-      if ( cps %in% (b[jj] + 1):(b[jj] + h) ){
-        h2 <- max(cps[cps %in% (b[jj] + 1):(b[jj] + h)]) - b[jj]
-      } else {
-        h2 <- h
-      }
-      nu <- c(rep(0, b[jj] - h1), rep(1/h1, h1), rep(-1/h2, h2), rep(0, n - b[jj] - h2))
-      nu2 <- 1/h1 + 1/h2
+
     }
-    nh <- h1 + h2
-    
+
+    nu <- c(rep(0, b[jj] - h1), rep(1/h1, h1), rep(-1/h2, h2), rep(0, n - b[jj] - h2))
+    nu2 <- 1/h1 + 1/h2
+    nh <- h1 + h2    
     nuTy <- as.numeric(t(nu) %*% y)
 
     #### Construct Y s.t. y_t = Y_t^T (1,phi,Psi)
