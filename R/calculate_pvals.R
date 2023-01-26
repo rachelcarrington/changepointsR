@@ -272,16 +272,17 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
       ### Calculate P(phi > |nuTy| & phi \in S)
       P_both[jj, iter] <- 0
-      for ( i in 1:nrow(S2) ){
-        if ( S2$upper_lim[i] > abs(nuTy) ){
-          P_both[jj, iter] <- P_both[jj, iter] +
-            pnorm(S2$upper_lim[i] / sqrt(nu2 * sigma2)) - pnorm(max( c(abs(nuTy), S2$lower_lim[i]) ) / sqrt(nu2 * sigma2))
+      if ( nrow(S2) >= 1 ){
+        for ( i in 1:nrow(S2) ){
+          if ( S2$upper_lim[i] > abs(nuTy) ){
+            P_both[jj, iter] <- P_both[jj, iter] +
+              pnorm(S2$upper_lim[i] / sqrt(nu2 * sigma2)) - pnorm(max( c(abs(nuTy), S2$lower_lim[i]) ) / sqrt(nu2 * sigma2))
+          }
+          if ( S2$lower_lim[i] < (-1)*abs(nuTy) ){
+            P_both[jj, iter] <- P_both[jj, iter] +
+              pnorm(min( c(-abs(nuTy), S2$upper_lim[i]) ) / sqrt(nu2 * sigma2)) - pnorm(S2$lower_lim[i] / sqrt(nu2 * sigma2))
+          }
         }
-        if ( S2$lower_lim[i] < (-1)*abs(nuTy) ){
-          P_both[jj, iter] <- P_both[jj, iter] +
-            pnorm(min( c(-abs(nuTy), S2$upper_lim[i]) ) / sqrt(nu2 * sigma2)) - pnorm(S2$lower_lim[i] / sqrt(nu2 * sigma2))
-        }
-
       }
 
     }
