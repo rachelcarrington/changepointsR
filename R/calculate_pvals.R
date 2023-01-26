@@ -126,12 +126,12 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
       if ( cp_bound ){
         cps <- c(0, sort(b[-jj]), n)
-        if ( cps %in% (b[jj] - h[1] + 1):b[jj] ){
+        if ( sum(cps %in% (b[jj] - h[1] + 1):b[jj]) >= 1 ){
           h1 <- b[jj] - max(cps[cps %in% (b[jj] - h[1] + 1):b[jj]])
         } else {
           h1 <- h[1]
         }
-        if ( cps %in% (b[jj] + 1):(b[jj] + h[2]) ){
+        if ( sum(cps %in% (b[jj] + 1):(b[jj] + h[2])) >= 1 ){
           h2 <- max(cps[cps %in% (b[jj] + 1):(b[jj] + h[2])]) - b[jj]
         } else {
           h2 <- h[2]
@@ -154,12 +154,12 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
       stopifnot( h >= 2 )
       if ( cp_bound ){
         cps <- c(0, sort(b[-jj]), n)
-        if ( cps %in% (b[jj] - h + 1):b[jj] ){
+        if ( sum(cps %in% (b[jj] - h + 1):b[jj]) >= 1 ){
           h1 <- b[jj] - max(cps[cps %in% (b[jj] - h + 1):b[jj]])
         } else {
           h1 <- h
         }
-        if ( cps %in% (b[jj] + 1):(b[jj] + h) ){
+        if ( sum(cps %in% (b[jj] + 1):(b[jj] + h)) >= 1 ){
           h2 <- max(cps[cps %in% (b[jj] + 1):(b[jj] + h)]) - b[jj]
         } else {
           h2 <- h
@@ -295,6 +295,6 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
     P_phi_in_S <- NA
   }
 
-  return( list(p_value=p_value, P_both=P_both, P_phi_in_S=P_phi_in_S, S=S2) )
+  return( list(p_value=p_value, P_both=P_both, P_phi_in_S=P_phi_in_S) )
 
 }
