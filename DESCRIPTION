@@ -1,11 +1,11 @@
 Package: changepointsR
-Title: What the Package Does (One Line, Title Case)
+Title: Post-Selection Inference for Changepoints
 Version: 0.0.0.9000
 Authors@R: 
     person("Rachel", "Carrington", , "r.j.carrington@lancaster.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-1537-609X"))
-Description: What the package does (one paragraph).
-License: use_mit_license()
+Description: Implement post-selection inference for change in mean models, for several changepoint algorithms.
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
@@ -17,4 +17,3 @@ Suggests:
 VignetteBuilder: knitr
 Imports: 
     ChangepointInference
-
