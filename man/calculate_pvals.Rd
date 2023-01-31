@@ -12,6 +12,7 @@ calculate_pvals(
   threshold = NULL,
   maxiter = NULL,
   h = NULL,
+  gamma = 1,
   cp_bound = TRUE,
   sigma2 = 1,
   eps0 = 0.01,
@@ -40,12 +41,16 @@ calculate_pvals(
 \item{maxiter}{Positive integer. Maximum number of changepoints to find in changepoint algorithm. Ignored if
 \code{results} is specified}
 
-\item{h}{Positive integer (>=2) or \code{NULL}. Window size. If \code{NULL} then the changepoints either side of the
-changepoint of interest are used to define the window.}
+\item{h}{Positive integer (>=2) or vector of length 2 or \code{NULL}. Window size. If \code{NULL} then the changepoints either side of
+the changepoint of interest are used to define the window.}
 
-\item{cp_bound}{Logical. ...}
+\item{gamma}{Number in \code{(0, 1]}. If \code{h = NULL}, then \eqn{h} is taken to be \code{gamma} times the distance between the changepoint
+of interest and the estimated changepoints on either side. Ignored if \code{h} specified; defaults to \code{1}.}
 
-\item{sigma2}{Variance of \code{y}.}
+\item{cp_bound}{Logical. If \code{TRUE}, then if there is an estimated changepoint within the window that is fixed under the null hypothesis,
+this changepoint will be used as the boundary of the window.}
+
+\item{sigma2}{Variance of \code{y}. Defaults to \code{1} if not specified.}
 
 \item{eps0}{Hyperparameter for calculating S.}
 
@@ -88,10 +93,14 @@ either binary segmentation, wild binary segmentation, or narrowest over threshol
 \details{
 Given a changepoint of interest \eqn{\tau_j}, there are two options for the null hypothesis:
 \itemize{
-\item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. In this case \code{h} should be supplied.
-If \code{cp_bound} is \code{TRUE}, then if there is a another estimated changepoint within \code{h} of \eqn{\tau_j}, this will be used.
-\item There are no other changepoints within ...
-\item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. In this case \code{h} should be set to \code{NULL}.
+\item There are no changepoints within a window size \eqn{h} of \eqn{\tau_j}. In this case \code{h} should be supplied. It is also possible
+to use different values of \code{h} on either side of \eqn{\tau_j}, in which case \code{h} should be a vector of length 2.
+If \code{cp_bound = TRUE}, then if there is another estimated changepoint within the \code{h} of \eqn{\tau_j} then the window size used
+will be the minimum of \code{h} and the distance between \eqn{\tau_j} and the closest estimated changepoint to \eqn{\tau_j}.
+\item There are no other changepoints between \eqn{\tau_{j-1}} and \eqn{\tau_{j+1}}. In this case \code{h} should be set to \code{NULL}
+and \code{gamma} should be 1. (This is the default for the function.)
+\item There are no other changepoints between the midpoint of \eqn{\tau_{j-1}} and \eqn{\tau_j} and the midpoint of \eqn{\tau_j} and
+\eqn{\tau_{j+1}}. In this case use \code{h = NULL} and \code{gamma = 0.5}.
 }
 }
 \examples{
