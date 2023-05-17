@@ -59,8 +59,8 @@ calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NU
     x <- ( abs(cs[,2]) > 10^(-10) )
     inequalities <- c( (threshold - cs[x,1]) / cs[x,2], ((-1)*threshold - cs[x,1]) / cs[x,2] )
     signs <- c( ifelse( cs[x,2] > 0, -1, 1 ), ifelse( cs[x,2] > 0, 1, -1 ) )
-    max_lower_bound <- max( inequalities[ signs==1] )
-    min_upper_bound <- min( inequalities[ signs==-1] )
+    max_lower_bound <- max( inequalities[signs==1] )
+    min_upper_bound <- min( inequalities[signs==-1] )
 
   } else if ( length(b)>=n.cp ){
     ## (in this case we ignore the threshold, except to check whether Ct at each CP is larger than it)
@@ -112,10 +112,10 @@ calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NU
         e1 <- c(previous_cps, n)
 
         #### Calculate CUSUM statistic in terms of phi, for each interval
-        cs2 <- matrix( NA, nrow=n-1, ncol=2 )
+        cs2 <- matrix(NA, nrow=n-1, ncol=2)
         for ( m in 1:length(s1) ){
           if ( e1[m] > s1[m] ){  ##(intervals may have length 0 if we have consecutive CPs)
-            cs2[ s1[m]:(e1[m]-1), ] <- cusum_phi_vec( y, nu, nu2=nu2, nuTy=nuTy, s=s1[m], e=e1[m] )
+            cs2[ s1[m]:(e1[m]-1), ] <- cusum_phi_vec(y, nu, nu2=nu2, nuTy=nuTy, s=s1[m], e=e1[m])
           }
         }
 
@@ -128,9 +128,9 @@ calculate_interval_bs <- function(y, nu, b, d, nu2=NULL, nuTy=NULL, threshold=NU
           }
           signs <- ifelse( cs2[b[k],2] > 0, -d[k], d[k] )
           if ( signs==1 ){
-            max_lower_bound <- max( max_lower_bound, inequalities )
+            max_lower_bound <- max(max_lower_bound, inequalities)
           } else {
-            min_upper_bound <- min( min_upper_bound, inequalities )
+            min_upper_bound <- min(min_upper_bound, inequalities)
           }
         }
 
