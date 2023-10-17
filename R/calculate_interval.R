@@ -27,8 +27,8 @@ calculate_interval <- function(y, method, results, nu, nu2=NULL, nuTy=NULL, n.cp
 
   if ( method=="bs" ){
 
-    b <- results$results$b[ results$results$cp==1 ]
-    d <- results$results$d[ results$results$cp==1 ]
+    b <- results$results$b[results$results$cp == 1]
+    d <- results$results$d[results$results$cp == 1]
     interval <- calculate_interval_bs(y, nu, b, d, threshold=results$threshold, nu2=nu2, nuTy=nuTy, n.cp=n.cp)
 
   } else if ( method=="wbs" ){
