@@ -41,8 +41,8 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
 
   ## Calculate S given y, b, d
 
-  #### Possible methods: bs, wbs, not
-  ###### for sbs, use wbs
+  ## Possible methods: bs, wbs, not
+  ### for sbs, use wbs
 
   if ( is.null(results) ){
     if ( is.null(b) || is.null(d) || is.null(maxiter) || is.null(threshold) ){
@@ -81,20 +81,20 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
 
   if ( first_cp_only ){
     interval <- calculate_interval(y, method, results, nu, nu2=nu2, nuTy=nuTy, n.cp=1)
-    S <- data.frame( matrix( c(interval, as.matrix(c(b[1], d[1]))), nrow=1 ) )
+    S <- matrix(c(interval, as.matrix(c(b[1], d[1]))), nrow=1)
     colnames(S) <- c("lower_lim", "upper_lim", "b1", "d1")
 
     ncp_max <- 1
     eps <- eps0
-    while ( max(S$upper_lim) < Inf ){
-      phi <- max(S$upper_lim) + eps
+    while ( max(S[,"upper_lim"]) < Inf ){
+      phi <- max(S[,"upper_lim"]) + eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
       r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_ints, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
-      b2 <- r2$results$b[ r2$results$cp==1 ]
-      d2 <- r2$results$d[ r2$results$cp==1 ]
+      b2 <- r2$results$b[r2$results$cp == 1]
+      d2 <- r2$results$d[r2$results$cp == 1]
 
-      if ( b[1] %in% b2 ){ ## then we only have to go as far as b[1] in calculating CPs
+      if ( b[1] %in% b2 ){ # then we only have to go as far as b[1] in calculating CPs
         n.cp <- (1:length(b2))[b2==b[1]]
       } else {
         n.cp <- maxiter
@@ -102,17 +102,17 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
 
       interval <- calculate_interval(y, method, r2, nu, nu2=nu2, nuTy=nuTy, n.cp=n.cp)
 
-      ### Check this interval is the next one
+      # Check this interval is the next one
       ncps_found <- min(n.cp, length(b2))
-      if ( abs(interval[1] - max(S$upper_lim)) < 10^(-10) ){
+      if ( abs(interval[1] - max(S[,"upper_lim"])) < 10^(-10) ){
         if ( ncps_found == ncp_max ){
-          S <- rbind( S, c(interval, b2[1:ncps_found], d2[1:ncps_found]) )
+          S <- rbind(S, c(interval, b2[1:ncps_found], d2[1:ncps_found]))
         } else if ( ncps_found <= ncp_max ){
-          S <- rbind( S, c(interval, b2[1:ncps_found], rep(NA, ncp_max - ncps_found), d2[1:ncps_found], rep(NA, ncp_max - ncps_found)) )
+          S <- rbind(S, c(interval, b2[1:ncps_found], rep(NA, ncp_max - ncps_found), d2[1:ncps_found], rep(NA, ncp_max - ncps_found)))
         } else {
-          S <- cbind( S[,1:(2+ncp_max)], matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max), S[,-(1:(2+ncp_max))],
+          S <- cbind( S[,1:(2+ncp_max),drop=FALSE], matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max), S[,-(1:(2+ncp_max)),drop=FALSE],
                  matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max) )
-          S <- rbind( S, c(interval, b2[1:ncps_found], d2[1:ncps_found]) )
+          S <- rbind(S, c(interval, b2[1:ncps_found], d2[1:ncps_found]))
           ncp_max <- ncps_found
         }
         eps <- eps0
@@ -123,31 +123,31 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
     }
 
     eps <- eps0
-    while ( min(S$lower_lim) > -Inf ){
-      phi <- min(S$lower_lim) - eps
+    while ( min(S[,"lower_lim"]) > -Inf ){
+      phi <- min(S[,"lower_lim"]) - eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
       r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
-      b2 <- r2$results$b[ r2$results$cp==1 ]
-      d2 <- r2$results$d[ r2$results$cp==1 ]
+      b2 <- r2$results$b[r2$results$cp == 1]
+      d2 <- r2$results$d[r2$results$cp == 1]
 
-      if ( b[1] %in% b2 ){ ## then we only have to go as far as b[1] in calculating CPs
-        n.cp <- (1:length(b2))[b2==b[1]]
+      if ( b[1] %in% b2 ){ # then we only have to go as far as b[1] in calculating CPs
+        n.cp <- (1:length(b2))[b2 == b[1]]
       } else {
         n.cp <- maxiter
       }
 
       interval <- calculate_interval(y, method, r2, nu, nu2=nu2, nuTy=nuTy, n.cp=n.cp)
 
-      ### Check this interval is the next one
+      # Check this interval is the next one
       ncps_found <- min(n.cp, sum(!is.na(b2)))
-      if ( abs(interval[2] - min(S$lower_lim)) < 10^(-10) ){
+      if ( abs(interval[2] - min(S[,"lower_lim"])) < 10^(-10) ){
         if ( ncps_found == ncp_max ){
           S <- rbind( S, c(interval, b2[1:ncps_found], d2[1:ncps_found]) )
         } else if ( ncps_found <= ncp_max ){
           S <- rbind( S, c(interval, b2[1:ncps_found], rep(NA, ncp_max - ncps_found), d2[1:ncps_found], rep(NA, ncp_max - ncps_found)) )
         } else {
-          S <- cbind( S[,1:(2+ncp_max)], matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max), S[,-(1:(2+ncp_max))],
+          S <- cbind( S[,1:(2 + ncp_max),drop=FALSE], matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max), S[,-(1:(2 + ncp_max)),drop=FALSE],
                  matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max) )
           S <- rbind( S, c(interval, b2[1:ncps_found], d2[1:ncps_found]) )
           ncp_max <- ncps_found
@@ -159,46 +159,42 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
 
     }
 
-
-
-
   } else {
 
-
-    ### Calculate interval s.t. the given values of b & d are obtained
+    # Calculate interval s.t. the given values of b & d are obtained
     interval <- calculate_interval(y, method, results, nu, nu2=nu2, nuTy=nuTy, n.cp=maxiter)
     if ( length(b) >= 1 ){
-      S <- data.frame( matrix( c(interval, as.matrix(c(b, d))), nrow=1 ) )
+      S <- matrix(c(interval, as.matrix(c(b, d))), nrow=1)
       colnames(S) <- c("lower_lim", "upper_lim", paste0("b", 1:length(b)), paste0("d", 1:length(d)))
     } else {
-      S <- data.frame( matrix( c( interval, as.matrix(c(NA, NA)) ), nrow=1 ) )
+      S <- matrix(c(interval, as.matrix(c(NA, NA))), nrow=1)
       colnames(S) <- c("lower_lim", "upper_lim", "b1", "d1")
     }
 
     ncp_max <- max(length(b), 1)
 
-    ### Find other intervals
+    # Find other intervals
     eps <- eps0
-    while ( max(S$upper_lim) < Inf ){
-      phi <- max(S$upper_lim) + eps
+    while ( max(S[,"upper_lim"]) < Inf ){
+      phi <- max(S[,"upper_lim"]) + eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
       r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
-      b2 <- r2$results$b[ r2$results$cp==1 ]
-      d2 <- r2$results$d[ r2$results$cp==1 ]
+      b2 <- r2$results$b[r2$results$cp == 1]
+      d2 <- r2$results$d[r2$results$cp == 1]
 
       interval <- calculate_interval(y, method, r2, nu, nu2=nu2, nuTy=nuTy, n.cp=maxiter)
 
-      ### Check this interval is the next one
-      if ( abs( interval[1] - max(S$upper_lim) ) < 10^(-10) ){
+      # Check this interval is the next one
+      if ( abs( interval[1] - max(S[,"upper_lim"]) ) < 10^(-10) ){
         if ( length(b2) == ncp_max ){
-          S <- rbind( S, c(interval, b2, d2) )
+          S <- rbind(S, c(interval, b2, d2))
         } else if ( length(b2) <= ncp_max ){
-          S <- rbind( S, c(interval, b2, rep(NA, ncp_max - length(b2)), d2, rep(NA, ncp_max - length(b2))) )
+          S <- rbind(S, c(interval, b2, rep(NA, ncp_max - length(b2)), d2, rep(NA, ncp_max - length(b2))))
         } else {
-          S <- cbind( S[,1:(2+ncp_max)], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[,-(1:(2+ncp_max))],
-                 matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max) )
-          S <- rbind( S, c(interval, b2, d2) )
+          S <- cbind(S[,1:(2+ncp_max),drop=FALSE], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[,-(1:(2+ncp_max)),drop=FALSE],
+                 matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max))
+          S <- rbind(S, c(interval, b2, d2))
           ncp_max <- length(b2)
         }
         eps <- eps0
@@ -209,26 +205,26 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
     }
 
     eps <- eps0
-    while ( min(S$lower_lim) > -Inf ){
-      phi <- min(S$lower_lim) - eps
+    while ( min(S[,"lower_lim"]) > -Inf ){
+      phi <- min(S[,"lower_lim"]) - eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
       r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
-      b2 <- r2$results$b[ r2$results$cp==1 ]
-      d2 <- r2$results$d[ r2$results$cp==1 ]
+      b2 <- r2$results$b[r2$results$cp == 1]
+      d2 <- r2$results$d[r2$results$cp == 1]
 
       interval <- calculate_interval(y, method, r2, nu, nu2=nu2, nuTy=nuTy, n.cp=maxiter)
 
-      ### Check this interval is the next one
-      if ( abs( interval[2] - min(S$lower_lim) ) < 10^(-10) ){
+      # Check this interval is the next one
+      if ( abs( interval[2] - min(S[,"lower_lim"]) ) < 10^(-10) ){
         if ( length(b2) == ncp_max ){
-          S <- rbind( S, c(interval, b2, d2) )
+          S <- rbind(S, c(interval, b2, d2))
         } else if ( length(b2) <= ncp_max ){
-          S <- rbind( S, c(interval, b2, rep(NA, ncp_max - length(b2)), d2, rep(NA, ncp_max - length(b2))) )
+          S <- rbind(S, c(interval, b2, rep(NA, ncp_max - length(b2)), d2, rep(NA, ncp_max - length(b2))))
         } else {
-          S <- cbind( S[,1:(2+ncp_max)], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[,-(1:(2+ncp_max))],
-                 matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max) )
-          S <- rbind( S, c(interval, b2, d2) )
+          S <- cbind(S[,1:(2+ncp_max),drop=FALSE], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[,-(1:(2+ncp_max)),drop=FALSE],
+                 matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max))
+          S <- rbind(S, c(interval, b2, d2))
           ncp_max <- length(b2)
         }
         eps <- eps0
@@ -240,7 +236,8 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
 
   }
 
-  colnames(S) <- c( "lower_lim", "upper_lim", paste0("b", 1:ncp_max), paste0("d", 1:ncp_max) )
+  S <- data.frame(S)
+  colnames(S) <- c("lower_lim", "upper_lim", paste0("b", 1:ncp_max), paste0("d", 1:ncp_max))
 
   return(S)
 }
