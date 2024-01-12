@@ -72,13 +72,13 @@
 #'
 calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, maxiter=NULL, h=NULL, gamma=1, cp_bound=TRUE, sigma2=1, eps0=0.01,
                             include_original=TRUE, num_pvals=NULL, random_samples=NULL, num_rand_samples=NULL, seeded=FALSE,
-                            decay=NULL, return_probs=FALSE){
+                            decay=NULL, return_probs=FALSE, autocor=FALSE){
 
   stopifnot( method %in% c("bs", "wbs", "not") )
 
   n <- length(y)
 
-  ## Implement changepoint algorithm
+  # Implement changepoint algorithm
   if ( is.null(results) ){
 
     if ( method != "bs" & is.null(num_rand_samples) & is.null(random_samples) ){
@@ -97,8 +97,8 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
   if ( method != "bs" ){
     random_samples <- results$rand_ints
   }
-  b <- results$results$b[ results$results$cp == 1 ]
-  d <- results$results$d[ results$results$cp == 1 ]
+  b <- results$results$b[results$results$cp == 1]
+  d <- results$results$d[results$results$cp == 1]
 
   if ( length(b) == 0 ){
     stop("No changepoints detected")
@@ -112,9 +112,18 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
   P_both <- P_phi_in_S <- matrix(0, nrow=num_pvals, ncol=N)
 
 
+  if ( autocor ){
+    sig2 <- diag((1 - rho^seq(2, 2*n, by=2))/(1 - rho^2))
+    for ( i in 1:(n - 1) ){
+      sig2[(i + 1):n, i] <- sig2[i, (i + 1):n] <- rho^seq(1:(n - i)) * sig2[i, i]
+    }
+    D <- diag(svd(sig2)$d)
+  }
+
+
   for ( jj in 1:num_pvals ){
 
-    ## Calculate nu
+    # Calculate nu
     if ( is.null(h) ){ # use changepoint on either side to determine h
 
       cps <- c(0, sort(b, decreasing=FALSE), n)
@@ -179,71 +188,72 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
     }
 
+
     nu <- c(rep(0, b[jj] - h1), rep(1/h1, h1), rep(-1/h2, h2), rep(0, n - b[jj] - h2))
-    nu2 <- 1/h1 + 1/h2
+    nu2 <- ifelse(autocor, c(t(nu) %*% D %*% nu), 1/h1 + 1/h2)
     nh <- h1 + h2    
-    nuTy <- as.numeric(t(nu) %*% y)
+    nuTy <- c(t(nu) %*% y)
 
-    #### Construct Y s.t. y_t = Y_t^T (1,phi,Psi)
-    Z <- diag(nh) - matrix( 1/(nh), nrow=nh, ncol=nh ) - 1/nu2 * crossprod(t(c(rep(1/h1, h1), rep(-1/h2, h2))))
-    Z[ abs(Z) < 10^(-10) ] <- 0
-    U <- svd(Z)$u[,1:(nh-2)]
-    U[ abs(U) < 10^(-10) ] <- 0
+    # Construct Y s.t. y_t = Y_t^T (1,phi,Psi)
+    Z <- diag(nh) - matrix(1/nh, nrow=nh, ncol=nh) - 1/nu2 * crossprod(t(c(rep(1/h1, h1), rep(-1/h2, h2))))
+    Z[abs(Z) < 10^(-10)] <- 0
+    U <- svd(Z)$u[,1:(nh - 2)]
+    U[abs(U) < 10^(-10)] <- 0
 
-    Y <- cbind(y, matrix(0, nrow=n, ncol=nh-1))
-    Y[nu!=0, 1] <- mean(y[(nu!=0)]) ## replace elements in (b-h, b+h) with mean
-    Y[nu!=0, 2] <- 1/nu2 * nu[(nu!=0)] ## constant of phi
-    Y[nu!=0, 3:ncol(Y)] <- U ## constants of Psi
+    Y <- cbind(y, matrix(0, nrow=n, ncol=nh - 1))
+    Y[nu != 0, 1] <- mean(y[nu != 0]) # replace elements in (b-h, b+h) with mean
+    Y[nu != 0, 2] <- 1/nu2 * nu[nu != 0] # constant of phi
+    Y[nu != 0, 3:ncol(Y)] <- U # constants of Psi
     colnames(Y) <- c("y0", "phi", paste0("psi", 1:(nh-2)))
     
-    ## Generate psi values
+    # Generate psi values
     if ( include_original ){
       if ( N > 1 ){
-        Psi <- rbind( matrix(rnorm((nh - 2) * (N - 1), sd=sqrt(sigma2)), nrow=(N - 1)), as.numeric(t(U) %*% y[(b[jj]-h1+1):(b[jj]+h2)]) )
+        Psi <- rbind( matrix(rnorm((nh - 2) * (N - 1), sd=sqrt(sigma2)), nrow=(N - 1)), as.numeric(t(U) %*% y[(b[jj] - h1 + 1):(b[jj] + h2)]) )
       } else {
-        Psi <- matrix(as.numeric(t(U) %*% y[(b[jj]-h1+1):(b[jj]+h2)]), nrow=1)
+        Psi <- matrix(as.numeric(t(U) %*% y[(b[jj] - h1 + 1):(b[jj] + h2)]), nrow=1)
       }
     } else {
-      Psi <- matrix(rnorm((nh-2)*N, sd=sqrt(sigma2)), nrow=N)
+      Psi <- matrix(rnorm((nh - 2)*N, sd=sqrt(sigma2)), nrow=N)
     }
 
 
     for ( iter in 1:N ){
 
-      ### Calculate S
-      y_new <- Y[,1] + nuTy / nu2 * nu ## this is necessary b/c when calculating S it assumes we need to subtract it
-      y_new[(b[jj]-h1+1):(b[jj]+h2)] <- y_new[(b[jj]-h1+1):(b[jj]+h2)] + U %*% t(Psi[iter,,drop=FALSE])
+      # Calculate S
+      y_new <- Y[,1] + nuTy / sum(nu^2) * nu # this is necessary b/c when calculating S it assumes we need to subtract it
+      y_new[(b[jj] - h1 + 1):(b[jj] + h2)] <- y_new[(b[jj] - h1 + 1):(b[jj] + h2)] + U %*% t(Psi[iter,,drop=FALSE])
 
       r2 <- find_cps(y_new, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=random_samples, seeded=seeded, decay=decay)
-      b2 <- r2$results$b[ r2$result$cp==1 ]
+      b2 <- r2$results$b[r2$result$cp == 1]
       b2 <- b2[!is.na(b2)]
       if ( length(b2) >= 1 ){
         if ( !is.null(h) & (r2$results$b[1] == b[jj]) ){
-          S <- calculate_S(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, first_cp_only=TRUE, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
-          ## nuTy should be calculated using the original y!
+          S <- calculate_S(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, first_cp_only=TRUE, nuTy=nuTy, nu2=nu2, rand_ints=random_samples, seeded=seeded, decay=decay)
+          # nuTy should be calculated using the original y!
         } else {
-          S <- calculate_S(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
+          S <- calculate_S(y_new, results=r2, nu=nu, nu2=nu2, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
         }
       } else {
-        S <- calculate_S(y_new, results=r2, nu=nu, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
+        S <- calculate_S(y_new, results=r2, nu=nu, nu2=nu2, threshold=threshold, maxiter=maxiter, method=method, nuTy=nuTy, rand_ints=random_samples, seeded=seeded, decay=decay)
       }
 
 
-      ### Calculate probability
+      # Calculate probability
 
       if ( is.null(h) ){
 
-        ### Find which intervals contain the correct combination of changepoints
-        ###### First get rid of intervals which contain too many changepoints
+        # Find which intervals contain the correct combination of changepoints
+        ## First get rid of intervals which contain too many changepoints
         max_cps_found <- (ncol(S) - 2)/2
         if ( max_cps_found > length(results$changepoints) ){
           S2 <- S[ is.na(S[,(2+length(results$changepoints)+1)]), ]
         } else {
           S2 <- S
         }
-        ###### Get rid of intervals which contain too few changepoints
+        ## Get rid of intervals which contain too few changepoints
         S2 <- S2[ !is.na(S2[,(2+length(results$changepoints))]), ]
-        ###### Check we have the correct combination of changepoints
+        ## Check we have the correct combination of changepoints
         z <- rep(0, nrow(S2))
         cps <- sort(results$changepoints)
         for ( j in 1:nrow(S2) ){
@@ -255,7 +265,7 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
       } else {
 
-        ### Find intervals which contain b[jj]
+        # Find intervals which contain b[jj]
         max_cps_found <- (ncol(S) - 2)/2
         S2 <- S[ S[,3]==b[jj], ]
         if ( max_cps_found > 1 ){
@@ -267,20 +277,27 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
       }
 
-      ### Calculate P(phi \in S)
-      P_phi_in_S[jj, iter] <- sum( pnorm(S2[,2] / sqrt(nu2 * sigma2)) - pnorm(S2[,1] / sqrt(nu2 * sigma2)) )
+      if ( autocor ){
+        sigma_phi <- sqrt(c(t(nu) %*% sig2 %*% nu) * sigma2)
+      } else {
+        sigma_phi <- sqrt(nu2 * sigma2)
+      }
 
-      ### Calculate P(phi > |nuTy| & phi \in S)
+      # Calculate P(phi \in S)
+#      P_phi_in_S[jj, iter] <- sum( pnorm(S2[,2] / sqrt(nu2 * sigma2)) - pnorm(S2[,1] / sqrt(nu2 * sigma2)) )
+      P_phi_in_S[jj, iter] <- sum(pnorm(S2[,2] / sigma_phi) - pnorm(S2[,1] / sigma_phi))
+
+      # Calculate P(phi > |nuTy| & phi \in S)
       P_both[jj, iter] <- 0
       if ( nrow(S2) >= 1 ){
         for ( i in 1:nrow(S2) ){
           if ( S2$upper_lim[i] > abs(nuTy) ){
             P_both[jj, iter] <- P_both[jj, iter] +
-              pnorm(S2$upper_lim[i] / sqrt(nu2 * sigma2)) - pnorm(max( c(abs(nuTy), S2$lower_lim[i]) ) / sqrt(nu2 * sigma2))
+              pnorm(S2$upper_lim[i] / sigma_phi) - pnorm(max( c(abs(nuTy), S2$lower_lim[i]) ) / sigma_phi)
           }
           if ( S2$lower_lim[i] < (-1)*abs(nuTy) ){
             P_both[jj, iter] <- P_both[jj, iter] +
-              pnorm(min( c(-abs(nuTy), S2$upper_lim[i]) ) / sqrt(nu2 * sigma2)) - pnorm(S2$lower_lim[i] / sqrt(nu2 * sigma2))
+              pnorm(min( c(-abs(nuTy), S2$upper_lim[i]) ) / sigma_phi) - pnorm(S2$lower_lim[i] / sigma_phi)
           }
         }
       }
@@ -288,6 +305,8 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
     }
 
     p_value[jj] <- sum(P_both[jj,]) / sum(P_phi_in_S[jj,])
+    
+    print(paste0("Calculated ", jj, "th p-value"))
 
   }
 
