@@ -22,7 +22,7 @@
 #' nu <- c(rep(1/b, b), rep(-1/(100-b), 100-b))
 #' cusum_phi_vec(y, nu)
 #'
-cusum_phi_vec <- function( y, nu, nu2=NULL, nuTy=NULL, s=1, e=length(y) ){
+cusum_phi_vec <- function( y, nu, nu2=NULL, nuTy=NULL, s=1, e=length(y), cumsums=NULL, nu_cumsums=NULL ){
 
   if ( is.null(nu2) ){
     nu2 <- sum(nu^2)
@@ -32,8 +32,8 @@ cusum_phi_vec <- function( y, nu, nu2=NULL, nuTy=NULL, s=1, e=length(y) ){
     nuTy <- as.numeric(t(nu) %*% y)
   }
 
-  cusum_nu <- cusum(nu, s, e)
-  cst <- cusum(y, s, e) - nuTy/nu2 * cusum_nu
+  cusum_nu <- cusum(nu, s, e, cumsums=nu_cumsums)
+  cst <- cusum(y, s, e, cumsums=cumsums) - nuTy/nu2 * cusum_nu
   coef <- 1/nu2 * cusum_nu
 
   return( cbind(cst, coef) )
