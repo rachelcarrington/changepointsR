@@ -29,7 +29,7 @@
 #'
 binary_segmentation <- function( y, threshold=NULL, maxiter=NULL ){
 
-  stopifnot( is.numeric(y) )
+  stopifnot(is.numeric(y))
 
   n <- length(y)
 
@@ -77,7 +77,7 @@ binary_segmentation <- function( y, threshold=NULL, maxiter=NULL ){
 
       cusum_stats <- rep(0, n - 1)
       for ( k in 1:length(s) ){
-        if ( e[k] > s[k] ){ # changed this from s[k]
+        if ( e[k] > s[k] + 1 ){ # changed this from s[k]
           cusum_stats[s[k]:(e[k] - 1)] <- cusum(y, s=s[k], e=e[k], cumsums=C0)
         }
       }
@@ -86,7 +86,6 @@ binary_segmentation <- function( y, threshold=NULL, maxiter=NULL ){
       lrs <- max(abs(cusum_stats)) # CUSUM statistic at this point
       d <- ifelse(cusum_stats[b] > 0, -1, 1) # direction of change
       cp <- lrs > threshold # = 1 if CUSUM statistic is above threshold, 0 otherwise
-#      results <- rbind( results, c(iter, max(s[s <= b]), min(e[e > b]), b, d, lrs, cp) )
       results[iter,] <- c(iter, max(s[s <= b]), min(e[e > b]), b, d, lrs, cp)
 
     } else {
@@ -105,6 +104,6 @@ binary_segmentation <- function( y, threshold=NULL, maxiter=NULL ){
   # Convert results to data frame
   results <- data.frame(results)
 
-  return( list( results=results, changepoints=changepoints, threshold=threshold, maxiter=maxiter ) )
+  return( list(results=results, changepoints=changepoints, threshold=threshold, maxiter=maxiter) )
 
 }
