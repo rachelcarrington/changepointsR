@@ -60,10 +60,10 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
   }
 
   if ( is.null(b) ){
-    b <- results$results$b[ results$results$cp==1 ]
+    b <- results$results$b[results$results$cp == 1]
   }
   if ( is.null(d) ){
-    d <- results$results$d[ results$results$cp==1 ]
+    d <- results$results$d[results$results$cp == 1]
   }
   if ( is.null(maxiter) ){
     maxiter <- results$maxiter
