@@ -60,7 +60,6 @@ binary_segmentation <- function( y, threshold=NULL, maxiter=NULL ){
   lrs <- max(abs(cusum_stats)) # CUSUM statistic at this point
   d <- ifelse(cusum_stats[b] > 0, -1, 1) # direction of change
   cp <- lrs > threshold # = 1 if CUSUM statistic is above threshold, 0 otherwise
-#  results <- data.frame(iter, s, e, b, d, lrs, cp)
   results[iter,] <- c(iter, s, e, b, d, lrs, cp)
 
   # Split dataset at changepoints and repeat
