@@ -58,7 +58,7 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
         nuTy <- as.numeric(t(nu)%*%y)
 
         S <- z$conditioning_sets[[jj]]
-        S2 <- S[ S$contained==1, ]
+        S2 <- S[S$contained==1, ]
 
         # Calculate P(phi \in S)
         P_phi_in_S_orig[jj] <- sum( pnorm( S2$max_mean / sqrt(nu2*sigma2) ) - pnorm( S2$min_mean / sqrt(nu2*sigma2) ) )
@@ -85,7 +85,6 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
       N2 <- N
 
     }
-
 
     # New p-values
 
@@ -174,7 +173,6 @@ l0_segmentation_psi <- function(y, lambda, N, h, sigma2=1, sig=4, include_origin
       p_val <- pvals_orig
 
     }
-
 
 
   } else {
