@@ -39,10 +39,7 @@
 calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, maxiter=NULL, nu2=NULL, nuTy=NULL, eps0=0.01, first_cp_only=FALSE,
                          method="bs", rand_ints=NULL, seeded=FALSE, decay=NULL ){
 
-  ## Calculate S given y, b, d
-
-  ## Possible methods: bs, wbs, not
-  ### for sbs, use wbs
+  # Calculate S given y, b, d
 
   if ( is.null(results) ){
     if ( is.null(b) || is.null(d) || is.null(maxiter) || is.null(threshold) ){
@@ -143,13 +140,13 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
       ncps_found <- min(n.cp, sum(!is.na(b2)))
       if ( abs(interval[2] - min(S[,"lower_lim"])) < 10^(-10) ){
         if ( ncps_found == ncp_max ){
-          S <- rbind( S, c(interval, b2[1:ncps_found], d2[1:ncps_found]) )
+          S <- rbind(S, c(interval, b2[1:ncps_found], d2[1:ncps_found]))
         } else if ( ncps_found <= ncp_max ){
-          S <- rbind( S, c(interval, b2[1:ncps_found], rep(NA, ncp_max - ncps_found), d2[1:ncps_found], rep(NA, ncp_max - ncps_found)) )
+          S <- rbind(S, c(interval, b2[1:ncps_found], rep(NA, ncp_max - ncps_found), d2[1:ncps_found], rep(NA, ncp_max - ncps_found)))
         } else {
-          S <- cbind( S[,1:(2 + ncp_max),drop=FALSE], matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max), S[,-(1:(2 + ncp_max)),drop=FALSE],
-                 matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max) )
-          S <- rbind( S, c(interval, b2[1:ncps_found], d2[1:ncps_found]) )
+          S <- cbind(S[, 1:(2 + ncp_max), drop=FALSE], matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max), S[, -(1:(2 + ncp_max)), drop=FALSE],
+                 matrix(NA, nrow=nrow(S), ncol=ncps_found - ncp_max))
+          S <- rbind(S, c(interval, b2[1:ncps_found], d2[1:ncps_found]))
           ncp_max <- ncps_found
         }
         eps <- eps0
@@ -186,13 +183,13 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
       interval <- calculate_interval(y, method, r2, nu, nu2=nu2, nuTy=nuTy, n.cp=maxiter)
 
       # Check this interval is the next one
-      if ( abs( interval[1] - max(S[,"upper_lim"]) ) < 10^(-10) ){
+      if ( abs(interval[1] - max(S[,"upper_lim"])) < 10^(-10) ){
         if ( length(b2) == ncp_max ){
           S <- rbind(S, c(interval, b2, d2))
         } else if ( length(b2) <= ncp_max ){
           S <- rbind(S, c(interval, b2, rep(NA, ncp_max - length(b2)), d2, rep(NA, ncp_max - length(b2))))
         } else {
-          S <- cbind(S[,1:(2+ncp_max),drop=FALSE], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[,-(1:(2+ncp_max)),drop=FALSE],
+          S <- cbind(S[, 1:(2+ncp_max), drop=FALSE], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[, -(1:(2+ncp_max)), drop=FALSE],
                  matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max))
           S <- rbind(S, c(interval, b2, d2))
           ncp_max <- length(b2)
@@ -222,7 +219,7 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
         } else if ( length(b2) <= ncp_max ){
           S <- rbind(S, c(interval, b2, rep(NA, ncp_max - length(b2)), d2, rep(NA, ncp_max - length(b2))))
         } else {
-          S <- cbind(S[,1:(2+ncp_max),drop=FALSE], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[,-(1:(2+ncp_max)),drop=FALSE],
+          S <- cbind(S[, 1:(2 + ncp_max), drop=FALSE], matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max), S[, -(1:(2 + ncp_max)), drop=FALSE],
                  matrix(NA, nrow=nrow(S), ncol=length(b2) - ncp_max))
           S <- rbind(S, c(interval, b2, d2))
           ncp_max <- length(b2)
