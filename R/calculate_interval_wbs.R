@@ -70,7 +70,7 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
   
   n <- length(y)
   
-  ### If no CPs (threshold must be specified):
+  # If no CPs (threshold must be specified):
   if ( sum(!is.na(b))==0 ){
 
     max_lower_bound <- -Inf
@@ -82,20 +82,20 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
 
       cs <- cusum_phi_vec(y, nu, nu2, nuTy, s=rand_ints[ind,1], e=rand_ints[ind,2])
       x <- abs(cs[,2]) > 10^(-10) ## if cs[i,2] = 0, then this inequality is constant in phi
-      inequalities <- c( (threshold - cs[x,1]) / cs[x,2], (-threshold - cs[x,1]) / cs[x,2] )
-      signs <- c( ifelse( cs[x,2] > 0, -1, 1 ), ifelse( cs[x,2] > 0, 1, -1 ) )
-      max_lower_bound <- max( c( max_lower_bound, inequalities[ signs==1] ) )
-      min_upper_bound <- min( c( min_upper_bound, inequalities[ signs==-1] ) )
+      inequalities <- c((threshold - cs[x,1]) / cs[x,2], (-threshold - cs[x,1]) / cs[x,2])
+      signs <- c( ifelse(cs[x,2] > 0, -1, 1), ifelse(cs[x,2] > 0, 1, -1) )
+      max_lower_bound <- max(c(max_lower_bound, inequalities[signs == 1]))
+      min_upper_bound <- min(c(min_upper_bound, inequalities[signs == -1]))
     
     }
 
 
   } else {
     
-    ### For the first CP:
+    # For the first CP:
     cs <- cusum_phi_vec(y, nu, nu2, nuTy, s=s[1], e=e[1])
 
-    #### (-d1) * C(b1) > threshold (0 if not given)
+    # (-d1) * C(b1) > threshold (0 if not given)
     tau <- b[1] - s[1] + 1
     if ( abs(cs[tau,2]) > 10^(-10) ){
       if ( is.null(threshold) ){
@@ -103,7 +103,7 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
       } else {
         inequalities <- (-d[1] * threshold - cs[tau,1]) / cs[tau,2]
       }
-      signs <- ifelse( cs[tau,2] > 0, -d[1], d[1] )
+      signs <- ifelse(cs[tau,2] > 0, -d[1], d[1])
       if ( signs == 1 ){
         max_lower_bound <- inequalities
         min_upper_bound <- Inf
@@ -116,53 +116,53 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
       min_upper_bound <- Inf
     }
     
-    #### | C(b1) | > +/- C(t) for t \neq b1, on interval (s[1], e[1])
-    inequalities <- cbind( (cs[-tau,1] - cs[tau,1])/(-cs[-tau,2] + cs[tau,2]), 
-                           (-1)*(cs[-tau,1] + cs[tau,1])/(cs[-tau,2] + cs[tau,2]) )
-    signs <- cbind( ifelse( -cs[-tau,2] + cs[tau,2] > 0, -d[1], d[1] ),
-                    ifelse( cs[-tau,2] + cs[tau,2] > 0, -d[1], d[1] ) )
+    # | C(b1) | > +/- C(t) for t \neq b1, on interval (s[1], e[1])
+    inequalities <- cbind((cs[-tau,1] - cs[tau,1]) / (-cs[-tau,2] + cs[tau,2]), 
+                           (-1)*(cs[-tau,1] + cs[tau,1]) / (cs[-tau,2] + cs[tau,2]))
+    signs <- cbind(ifelse(-cs[-tau,2] + cs[tau,2] > 0, -d[1], d[1]),
+                    ifelse(cs[-tau,2] + cs[tau,2] > 0, -d[1], d[1]))
     
-    #### Remove entries where we have divided by 0
-    signs[ abs(-cs[-tau,2] + cs[tau,2]) <= 10^(-10), 1 ] <- NA
-    signs[ abs(cs[-tau,2] + cs[tau,2]) <= 10^(-10), 2 ] <- NA
+    # Remove entries where we have divided by 0
+    signs[abs(-cs[-tau,2] + cs[tau,2]) <= 10^(-10), 1] <- NA
+    signs[abs(cs[-tau,2] + cs[tau,2]) <= 10^(-10), 2] <- NA
     
-    #### Update bounds
-    max_lower_bound <- max( c(max_lower_bound, inequalities[ signs == 1 ]), na.rm=TRUE )
-    min_upper_bound <- min( c(min_upper_bound, inequalities[ signs == -1 ]), na.rm=TRUE )
+    # Update bounds
+    max_lower_bound <- max(c(max_lower_bound, inequalities[signs == 1]), na.rm=TRUE)
+    min_upper_bound <- min(c(min_upper_bound, inequalities[signs == -1]), na.rm=TRUE)
 
 
-    #### Check other intervals: | C_{s1, e1}( b1 ) | > |C_{s,e} ( t )| for all s, e, t
+    # Check other intervals: | C_{s1, e1}( b1 ) | > |C_{s,e} ( t )| for all s, e, t
     for ( ind in 1:nrow(rand_ints) ){
 
       s2 <- rand_ints[ind,1]
       e2 <- rand_ints[ind,2]
-      if ( sum( abs(c(s[1],e[1]) - c(s2,e2)) ) != 0 ){
+      if ( sum(abs(c(s[1], e[1]) - c(s2, e2))) != 0 ){
 
         cs2 <- cusum_phi_vec(y, nu, nu2, nuTy, s=s2, e=e2)
-        inequalities <- cbind( (cs2[,1] - cs[tau,1])/(-cs2[,2] + cs[tau,2] ), 
-                               (-1)*(cs2[,1] + cs[tau,1])/(cs2[,2] + cs[tau,2]) )
-        signs <- cbind( ifelse( -cs2[,2] + cs[tau,2] > 0, -d[1], d[1] ),
-                        ifelse( cs2[,2] + cs[tau,2] > 0, -d[1], d[1] ) )
+        inequalities <- cbind((cs2[,1] - cs[tau,1]) / (-cs2[,2] + cs[tau,2]), 
+                               (-1)*(cs2[,1] + cs[tau,1]) / (cs2[,2] + cs[tau,2]))
+        signs <- cbind(ifelse(-cs2[,2] + cs[tau,2] > 0, -d[1], d[1]),
+                        ifelse(cs2[,2] + cs[tau,2] > 0, -d[1], d[1]))
     
-        #### Remove entries where we have divided by 0
-        signs[ abs(-cs2[,2] + cs[tau,2]) <= 10^(-10), 1 ] <- NA
-        signs[ abs(cs2[,2] + cs[tau,2]) <= 10^(-10), 2 ] <- NA
+        # Remove entries where we have divided by 0
+        signs[abs(-cs2[,2] + cs[tau,2]) <= 10^(-10), 1] <- NA
+        signs[abs(cs2[,2] + cs[tau,2]) <= 10^(-10), 2] <- NA
     
-        #### Update bounds
-        max_lower_bound <- max( c(max_lower_bound, inequalities[ signs==1 ]), na.rm=TRUE )
-        min_upper_bound <- min( c(min_upper_bound, inequalities[ signs==-1 ]), na.rm=TRUE )
+        # Update bounds
+        max_lower_bound <- max(c(max_lower_bound, inequalities[signs == 1]), na.rm=TRUE)
+        min_upper_bound <- min(c(min_upper_bound, inequalities[signs == -1]), na.rm=TRUE)
 
       }
 
     }
     
 
-    ### For later CPs, if any:
+    # For later CPs, if any:
     if ( n.cp > 1 & length(b) > 1 ){
       
       for ( k in 2:min(n.cp, length(b)) ){
 
-        #### We need -d[k]*C(b[k]) to be greater than 0 or the threshold
+        # We need -d[k]*C(b[k]) to be greater than 0 or the threshold
         cs <- cusum_phi_vec(y, nu, nu2, nuTy, s=s[k], e=e[k])
         tau <- b[k] - s[k] + 1
         if ( abs(cs[tau,2]) > 10^(-10) ){
@@ -171,54 +171,52 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
           } else {
             inequalities <- (-d[k]*threshold - cs[tau,1]) / cs[tau,2]
           }
-          signs <- ifelse( cs[tau,2] > 0, -d[k], d[k] )
-          if ( signs==1 ){
-            max_lower_bound <- max( max_lower_bound, inequalities )
+          signs <- ifelse(cs[tau,2] > 0, -d[k], d[k])
+          if ( signs == 1 ){
+            max_lower_bound <- max(max_lower_bound, inequalities)
           } else {
-            min_upper_bound <- min( min_upper_bound, inequalities )
+            min_upper_bound <- min(min_upper_bound, inequalities)
            }
         }
         
-        #### Also, we need |C(b[k])| > |C(b[t])| for t \neq k
-        inequalities <- cbind( (cs[-tau,1] - cs[tau,1])/(-cs[-tau,2] + cs[tau,2] ), 
-                               (-1)*(cs[-tau,1] + cs[tau,1])/(cs[-tau,2] + cs[tau,2]) )
-        signs <- cbind( ifelse( -cs[-tau,2] + cs[tau,2] > 0, -d[k], d[k] ),
-                        ifelse( cs[-tau,2] + cs[tau,2] > 0, -d[k], d[k] ) )
+        # Also, we need |C(b[k])| > |C(b[t])| for t \neq k
+        inequalities <- cbind((cs[-tau,1] - cs[tau,1]) / (-cs[-tau,2] + cs[tau,2]), 
+                               (-1)*(cs[-tau,1] + cs[tau,1]) / (cs[-tau,2] + cs[tau,2]))
+        signs <- cbind(ifelse(-cs[-tau,2] + cs[tau,2] > 0, -d[k], d[k]),
+                        ifelse(cs[-tau,2] + cs[tau,2] > 0, -d[k], d[k]))
         
-        #### Remove entries where we have divided by 0
-        signs[ abs(-cs[-tau,2] + cs[tau,2]) <= 10^(-10), 1 ] <- NA
-        signs[ abs(cs[-tau,2] + cs[tau,2]) <= 10^(-10), 2 ] <- NA
+        # Remove entries where we have divided by 0
+        signs[abs(-cs[-tau,2] + cs[tau,2]) <= 10^(-10), 1] <- NA
+        signs[abs(cs[-tau,2] + cs[tau,2]) <= 10^(-10), 2] <- NA
         
-        #### Remove NAs & recalculate bounds
-        max_lower_bound <- max( max_lower_bound, max( inequalities[ signs==1 ] ), na.rm=TRUE )
-        min_upper_bound <- min( min_upper_bound, min( inequalities[ signs==-1 ] ), na.rm=TRUE )
-
-        
-        #### Check other intervals: | C_{s1, e1}(b1) | > |C_{s,e} (t)| for all s, e, t
-
-        #### Remove intervals which contain the previous changepoint
-        rand_ints <- rand_ints[ !( rand_ints[,1] <= b[k-1] & rand_ints[,2] > b[k-1] ),,drop=FALSE ]
+        # Remove NAs & recalculate bounds
+        max_lower_bound <- max(max_lower_bound, max(inequalities[signs == 1]), na.rm=TRUE)
+        min_upper_bound <- min(min_upper_bound, min(inequalities[signs == -1]), na.rm=TRUE)
+       
+        # Check other intervals: | C_{s1, e1}(b1) | > |C_{s,e} (t)| for all s, e, t
+        # Remove intervals which contain the previous changepoint
+        rand_ints <- rand_ints[!( rand_ints[,1] <= b[k-1] & rand_ints[,2] > b[k-1]),, drop=FALSE]
 
         if ( nrow(rand_ints) >= 1 ){        
           for ( ind in 1:nrow(rand_ints) ){
 
             s2 <- rand_ints[ind,1]
             e2 <- rand_ints[ind,2]
-            if ( sum( abs(c(s[1], e[1]) - c(s2, e2)) ) != 0 ){
+            if ( sum(abs(c(s[1], e[1]) - c(s2, e2))) != 0 ){
 
               cs2 <- cusum_phi_vec(y, nu, nu2, nuTy, s=s2, e=e2)
-              inequalities <- cbind( (cs2[,1] - cs[tau,1])/(-cs2[,2] + cs[tau,2] ), 
-                                     (-1)*(cs2[,1] + cs[tau,1])/(cs2[,2] + cs[tau,2]) )
-              signs <- cbind( ifelse( -cs2[,2] + cs[tau,2] > 0, -d[k], d[k] ),
-                              ifelse( cs2[,2] + cs[tau,2] > 0, -d[k], d[k] ) )
+              inequalities <- cbind((cs2[,1] - cs[tau,1]) / (-cs2[,2] + cs[tau,2]), 
+                                    (-1)*(cs2[,1] + cs[tau,1]) / (cs2[,2] + cs[tau,2]))
+              signs <- cbind(ifelse(-cs2[,2] + cs[tau,2] > 0, -d[k], d[k]),
+                             ifelse(cs2[,2] + cs[tau,2] > 0, -d[k], d[k]))
     
-              #### Remove entries where we have divided by 0
-              signs[ abs(-cs2[,2] + cs[tau,2]) <= 10^(-10), 1 ] <- NA
-              signs[ abs(cs2[,2] + cs[tau,2]) <= 10^(-10), 2 ] <- NA
+              # Remove entries where we have divided by 0
+              signs[abs(-cs2[,2] + cs[tau,2]) <= 10^(-10), 1] <- NA
+              signs[abs(cs2[,2] + cs[tau,2]) <= 10^(-10), 2] <- NA
     
-              #### Update bounds
-              max_lower_bound <- max( c( max_lower_bound, inequalities[ signs==1 ] ), na.rm=TRUE )
-              min_upper_bound <- min( c( min_upper_bound, inequalities[ signs==-1 ] ), na.rm=TRUE )
+              # Update bounds
+              max_lower_bound <- max(c(max_lower_bound, inequalities[signs == 1]), na.rm=TRUE)
+              min_upper_bound <- min(c(min_upper_bound, inequalities[signs == -1]), na.rm=TRUE)
 
             }
 
@@ -232,23 +230,21 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
     
     if ( n.cp > length(b) ){
 
-      ### Check that for the next k, all |Ct|'s are below the threshold
+      # Check that for the next k, all |Ct|'s are below the threshold
       k <- length(b) + 1
 
-      #### Remove intervals which contain the previous changepoint
-      rand_ints <- rand_ints[ !( rand_ints[,1] <= b[k-1] & rand_ints[,2] > b[k-1] ),,drop=FALSE ]
+      # Remove intervals which contain the previous changepoint
+      rand_ints <- rand_ints[!(rand_ints[,1] <= b[k - 1] & rand_ints[,2] > b[k - 1]),, drop=FALSE]
  
-      #### Calculate bounds for which all C(t)'s in each RI will be below the threshold
+      # Calculate bounds for which all C(t)'s in each RI will be below the threshold
       if ( nrow(rand_ints) >= 1 ){
         for ( ind in 1:nrow(rand_ints) ){
-
           cs <- cusum_phi_vec(y, nu, nu2, nuTy, s=rand_ints[ind,1], e=rand_ints[ind,2])
-          x <- abs(cs[,2]) > 10^(-10) ## if cs[i,2] = 0, then this inequality is constant in phi
-          inequalities <- c( (threshold - cs[x,1]) / cs[x,2], (-threshold - cs[x,1]) / cs[x,2] )
-          signs <- c( ifelse( cs[x,2] > 0, -1, 1 ), ifelse( cs[x,2] > 0, 1, -1 ) )
-          max_lower_bound <- max( c(max_lower_bound, inequalities[ signs == 1 ]) )
-          min_upper_bound <- min( c(min_upper_bound, inequalities[ signs == -1 ]) )
-
+          x <- abs(cs[,2]) > 10^(-10) # if cs[i,2] = 0, then this inequality is constant in phi
+          inequalities <- c((threshold - cs[x,1]) / cs[x,2], (-threshold - cs[x,1]) / cs[x,2])
+          signs <- c(ifelse(cs[x,2] > 0, -1, 1), ifelse(cs[x,2] > 0, 1, -1))
+          max_lower_bound <- max( c(max_lower_bound, inequalities[signs == 1]))
+          min_upper_bound <- min( c(min_upper_bound, inequalities[signs == -1]))
         }
       }
 
@@ -256,8 +252,7 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
 
   }
   
-    
-  ### Inequalities are all satisfied by phi s.t. max_lower_bound < phi < min_upper_bound
+  # Inequalities are all satisfied by phi s.t. max_lower_bound < phi < min_upper_bound
   
   return( c(max_lower_bound, min_upper_bound) )
 }
