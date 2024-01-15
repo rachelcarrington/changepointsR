@@ -40,7 +40,7 @@ wild_binary_segmentation <- function( y, num_rand_samples=1000, random_samples=N
     maxiter <- n
   }
 
-  ### Draw random/seeded samples
+  # Draw random/seeded samples
   if ( is.null(random_samples) ){
     if ( seeded ){
       random_samples <- seeded.intervals(n, decay)
@@ -52,27 +52,28 @@ wild_binary_segmentation <- function( y, num_rand_samples=1000, random_samples=N
     num_rand_samples <- nrow(random_samples)
   }
 
-  ### Calculate changepoint estimate for each interval
+  # Calculate changepoint estimate for each interval
   results0 <- numeric(0)
   for ( ind in 1:num_rand_samples ){
     cusum_stats <- cusum(y, random_samples[ind,1], random_samples[ind,2], return_full=TRUE)
-    b_hat <- which.max( abs(cusum_stats) )
-    d_hat <- ifelse( cusum_stats[b_hat] > 0, -1, 1 )
+    b_hat <- which.max(abs(cusum_stats))
+    d_hat <- ifelse(cusum_stats[b_hat] > 0, -1, 1)
     cs <- cusum_stats[b_hat]
-    cp <- ifelse( abs(cs) > threshold, 1, 0 )
-    results0 <- rbind( results0, c(ind, random_samples[ind,1], random_samples[ind,2], b_hat, d_hat, cs, cp) )
+    cp <- ifelse(abs(cs) > threshold, 1, 0)
+    results0 <- rbind(results0, c(ind, random_samples[ind,1], random_samples[ind,2], b_hat, d_hat, cs, cp))
   }
 
   results0 <- data.frame(results0)
   colnames(results0) <- c("index", "s", "e", "b", "d", "cs", "cp")
-  ## Keep only intervals where the CUSUM statistic is above the threshold
-  results0 <- results0[results0$cp == 1,]
+
+  # Keep only intervals where the CUSUM statistic is above the threshold
+  results0 <- results0[results0$cp == 1, ]
   if( nrow(results0) == 0 ){
     stop("No changepoints detected.")
   }
 
-  ## Order by absolute value of CUSUM statistics
-  results0 <- results0[order(abs(results0$cs), decreasing=TRUE),]
+  # Order by absolute value of CUSUM statistics
+  results0 <- results0[order(abs(results0$cs), decreasing=TRUE), ]
 
   results <- numeric(0)
   iter <- 1
@@ -81,13 +82,13 @@ wild_binary_segmentation <- function( y, num_rand_samples=1000, random_samples=N
     b_hat <- results0$b[1]
     cp <- results0$cp[1]
 
-    ### Remove intervals which contain the changepoint
+    # Remove intervals which contain the changepoint
     contains_changepoint <- (b_hat >= results0$s) & (b_hat < results0$e)
-    results0 <- results0[!(contains_changepoint),]
+    results0 <- results0[!(contains_changepoint), ]
 
-    ### Check whether there are any intervals left; if not, end loop
-    iter <- ifelse( nrow(results0) == 0, maxiter + 1, iter + 1 )
+    # Check whether there are any intervals left; if not, end loop
+    iter <- ifelse(nrow(results0) == 0, maxiter + 1, iter + 1)
   }
 
-  return( list( results=results, changepoints=results$b, rand_ints=random_samples, threshold=threshold, maxiter=maxiter ) )
+  return( list(results=results, changepoints=results$b, rand_ints=random_samples, threshold=threshold, maxiter=maxiter) )
 }
