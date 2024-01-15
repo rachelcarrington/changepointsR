@@ -247,12 +247,12 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
         ## First get rid of intervals which contain too many changepoints
         max_cps_found <- (ncol(S) - 2)/2
         if ( max_cps_found > length(results$changepoints) ){
-          S2 <- S[ is.na(S[,(2+length(results$changepoints)+1)]), ]
+          S2 <- S[is.na(S[, (2 + length(results$changepoints) + 1)]), ]
         } else {
           S2 <- S
         }
         ## Get rid of intervals which contain too few changepoints
-        S2 <- S2[ !is.na(S2[,(2+length(results$changepoints))]), ]
+        S2 <- S2[!is.na(S2[,(2+length(results$changepoints))]), ]
         ## Check we have the correct combination of changepoints
         z <- rep(0, nrow(S2))
         cps <- sort(results$changepoints)
@@ -267,13 +267,13 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
         # Find intervals which contain b[jj]
         max_cps_found <- (ncol(S) - 2)/2
-        S2 <- S[ S[,3]==b[jj], ]
+        S2 <- S[S[,3] == b[jj], ]
         if ( max_cps_found > 1 ){
           for ( j in 2:max_cps_found ){
-            S2 <- rbind(S2, S[ S[,j+2]==b[jj], ])
+            S2 <- rbind(S2, S[S[, j+2] == b[jj], ])
           }
         }
-        S2 <- S2[ !is.na(S2$b1), ]
+        S2 <- S2[!is.na(S2$b1), ]
 
       }
 
@@ -284,7 +284,7 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
       }
 
       # Calculate P(phi \in S)
-#      P_phi_in_S[jj, iter] <- sum( pnorm(S2[,2] / sqrt(nu2 * sigma2)) - pnorm(S2[,1] / sqrt(nu2 * sigma2)) )
+#      P_phi_in_S[jj, iter] <- sum(pnorm(S2[,2] / sqrt(nu2 * sigma2)) - pnorm(S2[,1] / sqrt(nu2 * sigma2)))
       P_phi_in_S[jj, iter] <- sum(pnorm(S2[,2] / sigma_phi) - pnorm(S2[,1] / sigma_phi))
 
       # Calculate P(phi > |nuTy| & phi \in S)
@@ -293,11 +293,11 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
         for ( i in 1:nrow(S2) ){
           if ( S2$upper_lim[i] > abs(nuTy) ){
             P_both[jj, iter] <- P_both[jj, iter] +
-              pnorm(S2$upper_lim[i] / sigma_phi) - pnorm(max( c(abs(nuTy), S2$lower_lim[i]) ) / sigma_phi)
+              pnorm(S2$upper_lim[i] / sigma_phi) - pnorm(max(c(abs(nuTy), S2$lower_lim[i])) / sigma_phi)
           }
           if ( S2$lower_lim[i] < (-1)*abs(nuTy) ){
             P_both[jj, iter] <- P_both[jj, iter] +
-              pnorm(min( c(-abs(nuTy), S2$upper_lim[i]) ) / sigma_phi) - pnorm(S2$lower_lim[i] / sigma_phi)
+              pnorm(min(c(-abs(nuTy), S2$upper_lim[i])) / sigma_phi) - pnorm(S2$lower_lim[i] / sigma_phi)
           }
         }
       }
