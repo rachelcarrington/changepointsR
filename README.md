@@ -1,6 +1,6 @@
 # changepointsR
 
-Changepoint algorithms and inference for change in mean model. Paper: https://arxiv.org/pdf/2301.05636.pdf
+Changepoint algorithms and post-selection inference for the change in mean model. Paper: https://arxiv.org/pdf/2301.05636.pdf
 
 ********************************************************************************************************************************************
 ## Installation
@@ -40,14 +40,14 @@ To do post-selection inference:
 Binary segmentation:
 
 ```
-### Generate some data
+# Generate some data
 set.seed(100)
 y <- rnorm(200) + c(rep(1,40), rep(-1,40), rep(1,40), rep(-1,40), rep(1,40))
 
-### Implement binary segmentation
+# Implement binary segmentation
 results <- binary_segmentation(y, threshold=4)
 
-### Calculate p-values
+# Calculate p-values
 pvals <- calculate_pvals(y, method="bs", results=results, N=10, h=10, return_probs=TRUE)
 print(pvals)
 ```
@@ -55,14 +55,14 @@ print(pvals)
 L0 segmentation:
 
 ```
-### Generate some data
+# Generate some data
 set.seed(100)
 y <- rnorm(200) + c(rep(1,40), rep(-1,40), rep(1,40), rep(-1,40), rep(1,40))
 
-### Implement L0 segmentation
+# Implement L0 segmentation
 results <- changepoint_estimates(y, "L0", 10)
 
-### Calculate p-values
+# Calculate p-values
 pvals <- l0_segmentation_psi(y, lambda=10, N=10, h=10, sigma2=1, include_original=TRUE, num_pvals=1)
 print(pvals)
 ```
