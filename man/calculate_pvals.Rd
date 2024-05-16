@@ -22,7 +22,8 @@ calculate_pvals(
   num_rand_samples = NULL,
   seeded = FALSE,
   decay = NULL,
-  return_probs = FALSE
+  return_probs = FALSE,
+  autocor = FALSE
 )
 }
 \arguments{

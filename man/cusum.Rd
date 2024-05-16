@@ -2,9 +2,9 @@
 % Please edit documentation in R/cusum.R
 \name{cusum}
 \alias{cusum}
-\title{Calculate CUSUM statistics for a vector}
+\title{Calculate CUSUM statistics for a vector.}
 \usage{
-cusum(y, s = 1, e = length(y), return_full = FALSE)
+cusum(y, s = 1, e = length(y), return_full = FALSE, cumsums = NULL)
 }
 \arguments{
 \item{y}{A numeric vector.}
@@ -15,12 +15,17 @@ cusum(y, s = 1, e = length(y), return_full = FALSE)
 
 \item{return_full}{Logical. If \code{TRUE}, returns vector of same length as \code{y}, with indices outside of \code{(s, e - 1)} set to
 \code{NA}. If \code{FALSE}, a vector of length \code{e - s + 1} is returned.}
+
+\item{cumsums}{Vector of cumulative sums of either \code{y} or \code{y[s:e]}. If not supplied, this will be calculated within the function.}
 }
 \value{
 A numeric vector.
 }
 \description{
 Calculate CUSUM statistics for a vector \code{y}.
+
+\code{cumsums} can be supplied to reduce computation time if \code{cusum} is applied to (subsets of) the same dataset multiple times. Otherwise
+it can be left as \code{NULL} and calculated within the function.
 }
 \examples{
 y <- c(1, 3, 2, 5, 3)

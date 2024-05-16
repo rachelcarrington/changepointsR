@@ -4,7 +4,16 @@
 \alias{cusum_phi_vec}
 \title{Calculate vector of CUSUM statistics for data y, in terms of phi}
 \usage{
-cusum_phi_vec(y, nu, nu2 = NULL, nuTy = NULL, s = 1, e = length(y))
+cusum_phi_vec(
+  y,
+  nu,
+  nu2 = NULL,
+  nuTy = NULL,
+  s = 1,
+  e = length(y),
+  cumsums = NULL,
+  nu_cumsums = NULL
+)
 }
 \arguments{
 \item{y}{Numeric vector of data.}
