@@ -53,9 +53,9 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
   
   if ( is.null(n.cp) ){
     if ( is.null(threshold) ){
-      n.cp <- length(b) ## assume number of iterations was specified since threshold is not given
+      n.cp <- length(b) # assume number of iterations was specified since threshold is not given
     } else {
-      n.cp <- length(y) ## just use threshold
+      n.cp <- length(y) # just use threshold
     }
   }
   
@@ -65,13 +65,13 @@ calculate_interval_wbs <- function(y, nu, results=NULL, b=NULL, d=NULL, s=NULL, 
   }
   
   if ( is.null(nuTy) ){
-    nuTy <- as.numeric(t(nu)%*%y)
+    nuTy <- as.numeric(t(nu) %*% y)
   }
   
   n <- length(y)
   
   # If no CPs (threshold must be specified):
-  if ( sum(!is.na(b))==0 ){
+  if ( sum(!is.na(b)) == 0 ){
 
     max_lower_bound <- -Inf
     min_upper_bound <- Inf
