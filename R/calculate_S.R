@@ -86,7 +86,7 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
     while ( max(S[,"upper_lim"]) < Inf ){
       phi <- max(S[,"upper_lim"]) + eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
-      r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_ints, rand_ints=rand_ints,
+      r2 <- find_changepoints(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_ints, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
       b2 <- r2$results$b[r2$results$cp == 1]
       d2 <- r2$results$d[r2$results$cp == 1]
@@ -123,7 +123,7 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
     while ( min(S[,"lower_lim"]) > -Inf ){
       phi <- min(S[,"lower_lim"]) - eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
-      r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
+      r2 <- find_changepoints(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
       b2 <- r2$results$b[r2$results$cp == 1]
       d2 <- r2$results$d[r2$results$cp == 1]
@@ -175,7 +175,7 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
     while ( max(S[,"upper_lim"]) < Inf ){
       phi <- max(S[,"upper_lim"]) + eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
-      r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
+      r2 <- find_changepoints(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
       b2 <- r2$results$b[r2$results$cp == 1]
       d2 <- r2$results$d[r2$results$cp == 1]
@@ -205,7 +205,7 @@ calculate_S <- function( y, nu, results=NULL, b=NULL, d=NULL, threshold=NULL, ma
     while ( min(S[,"lower_lim"]) > -Inf ){
       phi <- min(S[,"lower_lim"]) - eps
       y2 <- y_phi(y, nu, phi, nu2=nu2, nuTy=nuTy)
-      r2 <- find_cps(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
+      r2 <- find_changepoints(y2, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=rand_ints,
                          seeded=seeded, decay=decay)
       b2 <- r2$results$b[r2$results$cp == 1]
       d2 <- r2$results$d[r2$results$cp == 1]
