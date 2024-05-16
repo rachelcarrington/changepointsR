@@ -12,9 +12,9 @@
 #' y <- rnorm(200, sd=2) + c(rep(1, 100), rep(-1, 100))
 #' mad(y)
 #'
-mad <- function(y){
+mad <- function(x){
 
-  difs <- y[-1] - y[-length(y)]
+  difs <- x[-1] - y[-length(x)]
   mad_est <- median(abs(difs - median(difs))) / qnorm(0.75)
   mad_est <- mad_est^2 / 2
 
