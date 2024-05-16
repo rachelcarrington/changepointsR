@@ -19,7 +19,7 @@
 #' @param cp_bound Logical. If \code{TRUE}, then if there is an estimated changepoint within the window that is fixed under the null hypothesis,
 #' this changepoint will be used as the boundary of the window.
 #' @param sigma2 Variance of \code{y}. Defaults to \code{1} if not specified.
-#' @param eps0 Hyperparameter for calculating S.
+#' @param eps0 Hyperparameter for calculating S; defaults to 0.01. (This will only affect the time taken to run the algorithm, not the results.)
 #' @param include_original Logical. Whether to include the \eqn{\psi} value corresponding to the observed data in place of
 #' one of the random samples. Defaults to \code{TRUE}.
 #' @param num_pvals Integer or NA. Maximum number of p-values to calculate; if set to NA, it will default to \code{length(y) - 1}.
@@ -87,7 +87,7 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
       num_rand_samples <- nrow(random_samples)
     }
 
-    results <- find_cps(y, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=random_samples,
+    results <- find_changepoints(y, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=random_samples,
                          seeded=seeded, decay=decay)
 
   }
@@ -128,8 +128,8 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
 
       cps <- c(0, sort(b, decreasing=FALSE), n)
       j <- (1:length(cps))[cps==b[jj]]
-      h1 <- ceiling( gamma*(cps[j] - cps[j-1]) )
-      h2 <- ceiling( gamma*(cps[j+1] - cps[j]) )
+      h1 <- ceiling(gamma * (cps[j] - cps[j-1]))
+      h2 <- ceiling(gamma * (cps[j+1] - cps[j]))
 
     } else if ( length(h) >= 2 ) {
 
@@ -224,7 +224,7 @@ calculate_pvals <- function(y, method="bs", results=NULL, N=10, threshold=NULL, 
       y_new <- Y[,1] + nuTy / sum(nu^2) * nu # this is necessary b/c when calculating S it assumes we need to subtract it
       y_new[(b[jj] - h1 + 1):(b[jj] + h2)] <- y_new[(b[jj] - h1 + 1):(b[jj] + h2)] + U %*% t(Psi[iter,,drop=FALSE])
 
-      r2 <- find_cps(y_new, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=random_samples, seeded=seeded, decay=decay)
+      r2 <- find_changepoints(y_new, method=method, threshold=threshold, maxiter=maxiter, num_rand_ints=num_rand_samples, rand_ints=random_samples, seeded=seeded, decay=decay)
       b2 <- r2$results$b[r2$result$cp == 1]
       b2 <- b2[!is.na(b2)]
       if ( length(b2) >= 1 ){
