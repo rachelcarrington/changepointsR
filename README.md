@@ -1,7 +1,12 @@
 # changepointsR
 
-Changepoint algorithms and post-selection inference for the change in mean model. Paper: https://arxiv.org/pdf/2301.05636.pdf
+Changepoint algorithms and post-selection inference for the change in mean model. This code accompanies the paper
 
+**Improving Power by Conditioning on Less in Post-Selection Inference for Changepoints**, Rachel Carrington and Paul Fearnhead
+([arXiv link](https://arxiv.org/pdf/2301.05636.pdf)).
+
+********************************************************************************************************************************************
+See [github.com/rachelcarrington/changepointsPSI](github.com/rachelcarrington/changepointsPSI) for an updated version of this package that incorporates methods for dealing with changes in variance.
 ********************************************************************************************************************************************
 ## Installation
 
@@ -18,7 +23,6 @@ devtools::install_github("jewellsean/ChangepointInference")
 To use seeded binary segmentation, you will need to download seedBS.R` from https://github.com/kovacssolt/SeedBinSeg.
 
 ********************************************************************************************************************************************
-
 ### Changepoint algorithms
 The following changepoint algorithms are included:
 * binary segmentation: `binary_segmentation`
@@ -27,14 +31,12 @@ The following changepoint algorithms are included:
 * narrowest over threshold: `narrowest_over_threshold`
 
 ********************************************************************************************************************************************
-
 ### Post-selection inference
 To do post-selection inference:
 * Use `calculate_pvals` for binary segmentation, wild/seeded binary segmentation, and narrowest over threshold. </br>
 * Use `l0_segmentation_psi` for L0 segmentation.
 
 ********************************************************************************************************************************************
-
 ## Examples
 
 Binary segmentation:
